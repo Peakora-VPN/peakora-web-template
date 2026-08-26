@@ -1,0 +1,11 @@
+{
+  "name": "peakora-web-template",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static site served by nginx on Peakora Network edge hosts",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/"
+  }
+}
