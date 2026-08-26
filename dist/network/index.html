@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Network — Peakora Network</title>
+    <meta name="description" content="How a request moves through Peakora Network: ingress, termination, routing and delivery." />
+    <meta name="application-name" content="Peakora Network" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#070b16" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Peakora Network" />
+    <meta property="og:title" content="Network — Peakora Network" />
+    <meta property="og:description" content="How a request moves through Peakora Network: ingress, termination, routing and delivery." />
+    <meta property="og:locale" content="en_US" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/styles.ec17f326.css" />
+    <script type="module" src="/assets/app.c17c2b5b.js"></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-head">
+      <div class="wrap head-inner">
+        <a class="brand" href="/">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
+          <span class="brand-name">Peakora <b>Network</b></span>
+        </a>
+        <nav class="site-nav mono" aria-label="Primary">
+          <a href="/" data-nav="overview">Overview</a>
+          <a href="/network/" data-nav="network" aria-current="page">Network</a>
+          <a href="/#contact" data-nav="contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Network</p>
+          <div class="band-body">
+            <h1>How a request moves</h1>
+            <p class="lede">Four stages, in the order they happen. This host performs the first two of them for you right now.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Request path</p>
+          <div class="band-body">
+            <ol class="path">
+              <li>
+                <p class="path-step mono">01 / Ingress</p>
+                <h3>The connection lands at the nearest location</h3>
+                <p>Client resolvers are answered with the location closest to them, so the first packet travels the short way rather than across an ocean.</p>
+              </li>
+              <li>
+                <p class="path-step mono">02 / Termination</p>
+                <h3>TLS ends here, not further in</h3>
+                <p>The handshake completes at the edge host. That is the number you saw on the front page: it is short because the host answering it is near you.</p>
+              </li>
+              <li>
+                <p class="path-step mono">03 / Routing</p>
+                <h3>Onward paths are chosen, and re-chosen</h3>
+                <p>Each location carries more than one upstream. When a path degrades, traffic moves to another one instead of waiting for it to recover.</p>
+              </li>
+              <li>
+                <p class="path-step mono">04 / Delivery</p>
+                <h3>The response comes back the same short way</h3>
+                <p>The return path reuses the connection already established, so subsequent requests skip the lookup and the handshake entirely.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Operations</p>
+          <div class="band-body">
+            <h2>One baseline, many locations</h2>
+            <p class="lede">Every location is built from the same configuration and serves the same content. A location differs from its neighbours only in where it sits, which is why this page can name its country without knowing anything else about it.</p>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>Identical by construction</h3>
+                <p>Hosts are provisioned from one baseline. Nothing is configured by hand on an individual location.</p>
+              </article>
+              <article class="panel card">
+                <h3>Watched continuously</h3>
+                <p>Reachability and capacity are checked from outside the location, not only from within it.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Questions</p>
+          <div class="band-body">
+            <div class="faq">
+              <details>
+                <summary>Why does this hostname start with two letters?</summary>
+                <p>The prefix is an ISO 3166-1 country code naming the location. Your browser turns it into a country name locally, using its own region data. The page carries no list of locations, so nothing about the rest of the footprint is published here.</p>
+              </details>
+              <details>
+                <summary>Why is there nothing to log into?</summary>
+                <p>This host serves static content and nothing else. Operational tooling is not exposed on it, which is why every other path returns a plain 404.</p>
+              </details>
+              <details>
+                <summary>The timings look different each time I load the page.</summary>
+                <p>They are your measurements, not ours. A reused connection skips the lookup and the handshake, so those stages disappear from the readout entirely on a second load.</p>
+              </details>
+              <details>
+                <summary>How do I report abuse?</summary>
+                <p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with timestamps in UTC and the address you observed. That is enough to locate the traffic.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap foot-grid">
+        <div class="foot-brand">
+          <a class="brand" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
+            <span class="brand-name">Peakora <b>Network</b></span>
+          </a>
+          <p>Distributed edge infrastructure. This host serves one location of it.</p>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Site</p>
+          <ul>
+            <li><a href="/">Overview</a></li>
+            <li><a href="/network/">Network</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Contact</p>
+          <ul>
+            <li><a href="mailto:abuse@peakora.network">abuse@peakora.network</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap foot-rule mono">
+        <p>© <span id="year">2026</span> Peakora Network</p>
+        <p id="foot-node">Edge node</p>
+      </div>
+    </footer>
+  </body>
+</html>

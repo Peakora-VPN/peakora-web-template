@@ -2,12 +2,13 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync } from 'node:fs';
 import { copyFile, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
-import { extname, join } from 'node:path';
+import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const SRC = join(ROOT, 'src');
 const ASSETS = join(SRC, 'assets');
+const PAGES = join(SRC, 'pages');
 const DIST = join(ROOT, 'dist');
 const DIST_ASSETS = join(DIST, 'assets');
 
@@ -29,6 +30,22 @@ async function emit(name, data) {
   const hashed = `${name.slice(0, dot)}.${hash(data)}${name.slice(dot)}`;
   await writeFile(join(DIST_ASSETS, hashed), data);
   return `/assets/${hashed}`;
+}
+
+// Метаданные страницы лежат в ведущем HTML-комментарии: title, description,
+// out (путь в dist) и необязательный nav (какой пункт меню пометить активным).
+function parsePage(file, raw) {
+  const head = raw.match(/^\s*<!--([\s\S]*?)-->/);
+  if (!head) throw new Error(`${file}: нет ведущего блока метаданных`);
+  const meta = {};
+  for (const line of head[1].split('\n')) {
+    const kv = line.match(/^\s*([a-z]+)\s*:\s*(.+?)\s*$/);
+    if (kv) meta[kv[1]] = kv[2];
+  }
+  for (const key of ['title', 'description', 'out']) {
+    if (!meta[key]) throw new Error(`${file}: нет обязательного поля «${key}»`);
+  }
+  return { meta, content: raw.slice(head[0].length) };
 }
 
 await rm(DIST, { recursive: true, force: true });
@@ -59,17 +76,46 @@ const app = (await readFile(join(SRC, 'app.js'), 'utf8')).replace(
 );
 const appUrl = await emit('app.js', app);
 
-// 4. HTML.
+// 4. Страницы: общий каркас + содержимое из src/pages/.
+const layout = await readFile(join(SRC, 'layout.html'), 'utf8');
 const logo = (await readFile(join(ASSETS, 'logo.svg'), 'utf8')).trim();
 const year = String(new Date().getFullYear());
-for (const page of ['index.html', '404.html']) {
-  let html = await readFile(join(SRC, page), 'utf8');
-  html = html.replace('<!--LOGO-->', logo);
+
+// Единственный источник контактного адреса: в разметке он стоит плейсхолдером,
+// иначе правку пришлось бы разносить по каркасу и двум страницам.
+const site = JSON.parse(await readFile(join(SRC, 'site.json'), 'utf8'));
+if (!site.contact) throw new Error('src/site.json: нет поля «contact»');
+
+const written = new Set();
+
+for (const file of readdirSync(PAGES).filter((f) => extname(f) === '.html')) {
+  const { meta, content } = parsePage(file, await readFile(join(PAGES, file), 'utf8'));
+  if (written.has(meta.out)) throw new Error(`${file}: путь «${meta.out}» уже занят другой страницей`);
+  written.add(meta.out);
+
+  let html = layout
+    .split('{{TITLE}}')
+    .join(meta.title)
+    .split('{{DESCRIPTION}}')
+    .join(meta.description)
+    .split('{{CONTENT}}')
+    .join(content);
+
+  if (meta.nav) {
+    html = html.replace(`data-nav="${meta.nav}"`, `data-nav="${meta.nav}" aria-current="page"`);
+  }
+
+  // Логотип инлайнится ДО удаления комментариев — иначе плейсхолдер исчезнет вместе с ними.
+  html = html.split('<!--LOGO-->').join(logo);
   html = stripHtmlComments(html);
   html = html.split('/assets/styles.css').join(cssUrl);
   html = html.split('/assets/app.js').join(appUrl);
   html = html.split('{{YEAR}}').join(year);
-  await writeFile(join(DIST, page), html);
+  html = html.split('{{CONTACT}}').join(site.contact);
+
+  const out = join(DIST, meta.out);
+  await mkdir(dirname(out), { recursive: true });
+  await writeFile(out, html);
 }
 
 // 5. Файлы, которые должны лежать в корне.

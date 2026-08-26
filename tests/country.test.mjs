@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 
 import {
   countryFromHostname,
-  flagFromCode,
-  nodeLabel,
+  nodeHeadline,
+  nodeIdentity,
   pageTitle,
   regionName,
 } from '../src/lib.js';
@@ -43,16 +43,12 @@ test('regionName отсеивает псевдорегионы, но пропу�
   assert.equal(regionName(undefined), null);
 });
 
-test('флаг собирается из regional indicator symbols', () => {
-  assert.equal(flagFromCode('pl'), '\u{1F1F5}\u{1F1F1}');
-  assert.equal(flagFromCode('x'), '');
-  assert.equal(flagFromCode(undefined), '');
-});
-
-test('подписи деградируют до нейтральных', () => {
+test('подписи узла деградируют до нейтральных', () => {
   const pl = { code: 'PL', name: 'Poland' };
-  assert.equal(nodeLabel(pl), 'Poland · Edge node');
-  assert.equal(nodeLabel(null), 'Edge node');
+  assert.equal(nodeHeadline(pl), 'Poland');
+  assert.equal(nodeHeadline(null), 'Edge node');
+  assert.equal(nodeIdentity(pl), 'PL · Poland');
+  assert.equal(nodeIdentity(null), 'Edge node');
   assert.equal(pageTitle(pl), 'Poland — Peakora Network');
   assert.equal(pageTitle(null), 'Peakora Network — Edge infrastructure');
 });

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <meta name="application-name" content="Peakora Network" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#070b16" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Peakora Network" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESCRIPTION}}" />
+    <meta property="og:locale" content="en_US" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script type="module" src="/assets/app.js"></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-head">
+      <div class="wrap head-inner">
+        <a class="brand" href="/">
+          <!--LOGO-->
+          <span class="brand-name">Peakora <b>Network</b></span>
+        </a>
+        <nav class="site-nav mono" aria-label="Primary">
+          <a href="/" data-nav="overview">Overview</a>
+          <a href="/network/" data-nav="network">Network</a>
+          <a href="/#contact" data-nav="contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+{{CONTENT}}
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap foot-grid">
+        <div class="foot-brand">
+          <a class="brand" href="/">
+            <!--LOGO-->
+            <span class="brand-name">Peakora <b>Network</b></span>
+          </a>
+          <p>Distributed edge infrastructure. This host serves one location of it.</p>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Site</p>
+          <ul>
+            <li><a href="/">Overview</a></li>
+            <li><a href="/network/">Network</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Contact</p>
+          <ul>
+            <li><a href="mailto:{{CONTACT}}">{{CONTACT}}</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap foot-rule mono">
+        <p>© <span id="year">{{YEAR}}</span> Peakora Network</p>
+        <p id="foot-node">Edge node</p>
+      </div>
+    </footer>
+  </body>
+</html>

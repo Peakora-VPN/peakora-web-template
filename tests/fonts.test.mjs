@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 
 // Inter отдаётся вариативным шрифтом: один файл на веса 400 и 500.
-const FILES = ['inter-latin.woff2', 'space-grotesk-latin.woff2'];
-const LICENSES = ['OFL.txt', 'OFL-SpaceGrotesk.txt'];
+const FILES = ['inter-latin.woff2', 'space-grotesk-latin.woff2', 'jetbrains-mono-latin.woff2'];
+const LICENSES = ['OFL.txt', 'OFL-SpaceGrotesk.txt', 'OFL-JetBrainsMono.txt'];
 
 const css = () => readFileSync(`${SRC}styles.css`, 'utf8');
 
@@ -55,7 +55,7 @@ test('styles.css подключает только локальные шрифт
 // Именно этот тест оправдывает отказ от подмножества latin-ext: если ICU когда-нибудь
 // начнёт отдавать название региона с символом вне диапазона, глиф молча уедет на
 // запасной шрифт посреди строки — тест поймает это раньше, чем глаз.
-test('unicode-range покрывает все английские названия регионов и строки страницы', () => {
+test('unicode-range покрывает все английские названия регионов и строки страниц', () => {
   const ranges = parseRanges(css());
   assert.ok(ranges.length > 0, 'в CSS нет ни одного unicode-range');
   const covered = (cp) => ranges.some(([lo, hi]) => cp >= lo && cp <= hi);
@@ -76,10 +76,12 @@ test('unicode-range покрывает все английские назван�
     }
   }
 
-  const pageText = [readFileSync(`${SRC}index.html`, 'utf8'), readFileSync(`${SRC}404.html`, 'utf8')]
+  const pages = ['layout.html', 'pages/index.html', 'pages/network.html', 'pages/404.html'];
+  const text = pages
+    .map((p) => readFileSync(SRC + p, 'utf8'))
     .join('')
     .replace(/<[^>]*>/g, ' ');
-  for (const ch of pageText) if (!covered(ch.codePointAt(0))) missing.add(ch);
+  for (const ch of text) if (!covered(ch.codePointAt(0))) missing.add(ch);
 
   assert.equal(missing.size, 0, `вне unicode-range: ${[...missing].join(' ')}`);
 });

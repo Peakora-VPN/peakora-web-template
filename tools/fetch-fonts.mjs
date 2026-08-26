@@ -18,6 +18,8 @@ const UA =
 const WANTED = [
   { family: 'Inter', weights: [400, 500], slug: 'inter' },
   { family: 'Space Grotesk', weights: [600], slug: 'space-grotesk' },
+  // Утилитарное начертание для подписей, фаз и чисел — язык предметной области.
+  { family: 'JetBrains Mono', weights: [500], slug: 'jetbrains-mono' },
 ];
 const SUBSETS = ['latin'];
 

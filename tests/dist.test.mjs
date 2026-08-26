@@ -10,6 +10,7 @@ const DIST = join(ROOT, 'dist');
 
 const TEXT_EXT = new Set(['.html', '.css', '.js', '.svg', '.txt']);
 const NAMESPACES = ['http://www.w3.org/2000/svg', 'http://www.w3.org/1999/xlink'];
+const PAGES = ['index.html', 'network/index.html', '404.html'];
 const FORBIDDEN = [
   'vpn', 'proxy', 'xray', 'reality', 'remnawave',
   'marzban', 'shadowsocks', 'vless', 'trojan',
@@ -26,19 +27,56 @@ function walk(dir) {
 }
 
 const textFiles = () => walk(DIST).filter((f) => TEXT_EXT.has(extname(f)));
+const page = (name) => readFileSync(join(DIST, name), 'utf8');
 
 before(() => {
   execFileSync(process.execPath, ['build.mjs'], { cwd: ROOT, stdio: 'pipe' });
 });
 
-test('сборка подставляет хэшированные имена и убирает плейсхолдеры', () => {
-  const html = readFileSync(join(DIST, 'index.html'), 'utf8');
-  assert.match(html, /href="\/assets\/styles\.[0-9a-f]{8}\.css"/);
-  assert.match(html, /src="\/assets\/app\.[0-9a-f]{8}\.js"/);
-  assert.ok(!html.includes('<!--LOGO-->'), 'плейсхолдер логотипа остался');
-  assert.ok(!html.includes('{{YEAR}}'), 'плейсхолдер года остался');
-  assert.match(html, /<path fill="currentColor"/, 'логотип не заинлайнен');
-  assert.ok(!html.includes('<!--'), 'HTML-комментарии не удалены');
+test('собираются все страницы, включая вложенную', () => {
+  for (const name of PAGES) {
+    assert.doesNotThrow(() => statSync(join(DIST, name)), `нет ${name}`);
+  }
+});
+
+test('каркас разворачивается: ни одного плейсхолдера не осталось', () => {
+  for (const name of PAGES) {
+    const html = page(name);
+    for (const token of ['{{TITLE}}', '{{DESCRIPTION}}', '{{CONTENT}}', '{{YEAR}}', '<!--LOGO-->']) {
+      assert.ok(!html.includes(token), `${name}: остался ${token}`);
+    }
+    assert.ok(!html.includes('<!--'), `${name}: HTML-комментарии не удалены`);
+    assert.match(html, /<path fill="currentColor"/, `${name}: логотип не заинлайнен`);
+    assert.match(html, /<title>.+<\/title>/, `${name}: пустой заголовок`);
+  }
+});
+
+test('у страниц свои заголовки, а активный пункт меню помечен', () => {
+  assert.match(page('index.html'), /<title>Peakora Network — Edge infrastructure<\/title>/);
+  assert.match(page('network/index.html'), /<title>Network — Peakora Network<\/title>/);
+  assert.match(page('404.html'), /<title>Not found — Peakora Network<\/title>/);
+
+  assert.match(page('index.html'), /data-nav="overview" aria-current="page"/);
+  assert.match(page('network/index.html'), /data-nav="network" aria-current="page"/);
+  assert.doesNotMatch(page('404.html'), /aria-current/, '404 не является пунктом меню');
+});
+
+test('контактный адрес подставлен из site.json', () => {
+  const site = JSON.parse(readFileSync(join(ROOT, 'src', 'site.json'), 'utf8'));
+  for (const name of PAGES) {
+    assert.ok(!page(name).includes('{{CONTACT}}'), `${name}: остался плейсхолдер`);
+  }
+  assert.ok(page('index.html').includes(`mailto:${site.contact}`), 'нет ссылки на почту');
+  assert.ok(page('index.html').includes(`data-copy="${site.contact}"`), 'кнопке копирования нечего копировать');
+  assert.ok(page('network/index.html').includes(site.contact), 'на /network/ нет адреса');
+});
+
+test('сборка подставляет хэшированные имена ассетов', () => {
+  for (const name of PAGES) {
+    const html = page(name);
+    assert.match(html, /href="\/assets\/styles\.[0-9a-f]{8}\.css"/, name);
+    assert.match(html, /src="\/assets\/app\.[0-9a-f]{8}\.js"/, name);
+  }
 });
 
 test('импорт в app.js указывает на существующий хэшированный lib', () => {

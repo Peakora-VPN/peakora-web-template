@@ -1,0 +1,91 @@
+<!--
+title: Network — Peakora Network
+description: How a request moves through Peakora Network: ingress, termination, routing and delivery.
+out: network/index.html
+nav: network
+-->
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Network</p>
+          <div class="band-body">
+            <h1>How a request moves</h1>
+            <p class="lede">Four stages, in the order they happen. This host performs the first two of them for you right now.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Request path</p>
+          <div class="band-body">
+            <ol class="path">
+              <li>
+                <p class="path-step mono">01 / Ingress</p>
+                <h3>The connection lands at the nearest location</h3>
+                <p>Client resolvers are answered with the location closest to them, so the first packet travels the short way rather than across an ocean.</p>
+              </li>
+              <li>
+                <p class="path-step mono">02 / Termination</p>
+                <h3>TLS ends here, not further in</h3>
+                <p>The handshake completes at the edge host. That is the number you saw on the front page: it is short because the host answering it is near you.</p>
+              </li>
+              <li>
+                <p class="path-step mono">03 / Routing</p>
+                <h3>Onward paths are chosen, and re-chosen</h3>
+                <p>Each location carries more than one upstream. When a path degrades, traffic moves to another one instead of waiting for it to recover.</p>
+              </li>
+              <li>
+                <p class="path-step mono">04 / Delivery</p>
+                <h3>The response comes back the same short way</h3>
+                <p>The return path reuses the connection already established, so subsequent requests skip the lookup and the handshake entirely.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Operations</p>
+          <div class="band-body">
+            <h2>One baseline, many locations</h2>
+            <p class="lede">Every location is built from the same configuration and serves the same content. A location differs from its neighbours only in where it sits, which is why this page can name its country without knowing anything else about it.</p>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>Identical by construction</h3>
+                <p>Hosts are provisioned from one baseline. Nothing is configured by hand on an individual location.</p>
+              </article>
+              <article class="panel card">
+                <h3>Watched continuously</h3>
+                <p>Reachability and capacity are checked from outside the location, not only from within it.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Questions</p>
+          <div class="band-body">
+            <div class="faq">
+              <details>
+                <summary>Why does this hostname start with two letters?</summary>
+                <p>The prefix is an ISO 3166-1 country code naming the location. Your browser turns it into a country name locally, using its own region data. The page carries no list of locations, so nothing about the rest of the footprint is published here.</p>
+              </details>
+              <details>
+                <summary>Why is there nothing to log into?</summary>
+                <p>This host serves static content and nothing else. Operational tooling is not exposed on it, which is why every other path returns a plain 404.</p>
+              </details>
+              <details>
+                <summary>The timings look different each time I load the page.</summary>
+                <p>They are your measurements, not ours. A reused connection skips the lookup and the handshake, so those stages disappear from the readout entirely on a second load.</p>
+              </details>
+              <details>
+                <summary>How do I report abuse?</summary>
+                <p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with timestamps in UTC and the address you observed. That is enough to locate the traffic.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>

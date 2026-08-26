@@ -1,0 +1,70 @@
+<!--
+title: Peakora Network — Edge infrastructure
+description: Peakora Network operates distributed edge infrastructure. This host serves one of its locations.
+out: index.html
+nav: overview
+-->
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Edge</p>
+          <div class="band-body">
+            <h1 id="node-headline">Edge node</h1>
+            <p class="lede">You have reached one of the hosts Peakora Network runs at the edge of its footprint. The readout below is your own connection to this host, measured by your browser.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="hs-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Handshake</p>
+          <div class="band-body">
+            <div class="panel instrument">
+              <div class="instrument-head">
+                <h2 id="hs-title">This connection</h2>
+                <p class="instrument-meta mono" id="hs-meta">not measured</p>
+              </div>
+              <ol class="track" id="hs-track">
+                <li class="track-note">Timing appears here once the page finishes loading.</li>
+              </ol>
+              <p class="instrument-foot mono">Measured in your browser from the Navigation Timing API. Nothing is sent anywhere.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">What this network does</p>
+          <div class="band-body">
+            <div class="grid">
+              <article class="panel card">
+                <h3>Edge delivery</h3>
+                <p>Connections terminate at the location nearest to the client, which keeps round trips short and predictable.</p>
+              </article>
+              <article class="panel card">
+                <h3>Transit &amp; routing</h3>
+                <p>Every location is provisioned with more than one upstream, so traffic can move away from a degraded path.</p>
+              </article>
+              <article class="panel card">
+                <h3>Operations</h3>
+                <p>Locations are built from a single configuration baseline and watched continuously for capacity and reachability.</p>
+              </article>
+            </div>
+            <p class="band-more"><a href="/network/">How a request moves through the network</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" id="contact">
+        <div class="wrap band-grid">
+          <p class="rail-label">Contact</p>
+          <div class="band-body">
+            <h2>Reaching us</h2>
+            <p class="lede">Operational issues and abuse reports go to one address. Include timestamps in UTC and the address you observed — that is enough to find the traffic.</p>
+            <p class="contact-line">
+              <a class="contact-mail mono" href="mailto:{{CONTACT}}">{{CONTACT}}</a>
+              <button class="copy mono" type="button" data-copy="{{CONTACT}}">Copy</button>
+            </p>
+          </div>
+        </div>
+      </section>
