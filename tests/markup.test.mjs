@@ -32,15 +32,24 @@ test('index.html содержит якоря и точки привязки ск
 });
 
 test('разметка совместима с CSP: нет инлайнового скрипта и style=', () => {
-  for (const name of ['index.html']) {
+  for (const name of ['index.html', '404.html']) {
     const html = read(name);
     assert.doesNotMatch(html, /<script(?![^>]*\bsrc=)[^>]*>/i, `${name}: инлайновый <script>`);
     assert.doesNotMatch(html, /\sstyle="/i, `${name}: атрибут style=`);
   }
 });
 
+test('404 повторяет каркас, но не содержит карточку узла', () => {
+  const html = read('404.html');
+  assert.match(html, /<html lang="en">/);
+  assert.match(html, /<meta name="robots" content="noindex, nofollow"/);
+  assert.ok(html.includes('<!--LOGO-->'));
+  assert.ok(html.includes('id="year"'));
+  assert.ok(!html.includes('id="node-label"'), '404 не должна перебивать свой заголовок');
+});
+
 test('в исходниках нет запрещённых слов', () => {
-  for (const name of ['index.html', 'styles.css', 'assets/logo.svg']) {
+  for (const name of ['index.html', '404.html', 'styles.css', 'assets/logo.svg']) {
     const text = read(name).toLowerCase();
     for (const word of FORBIDDEN) {
       assert.ok(!text.includes(word), `${name} содержит «${word}»`);
