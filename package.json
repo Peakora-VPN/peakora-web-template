@@ -6,6 +6,6 @@
   "description": "Static site served by nginx on Peakora Network edge hosts",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test tests/"
+    "test": "node --test"
   }
 }

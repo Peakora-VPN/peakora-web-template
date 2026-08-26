@@ -1,0 +1,4 @@
+# Peakora Network edge host. Duplicate content across locations is not useful
+# to index; the same directive is sent as an X-Robots-Tag header.
+User-agent: *
+Disallow: /

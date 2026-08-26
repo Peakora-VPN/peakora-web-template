@@ -72,7 +72,7 @@
   "description": "Static site served by nginx on Peakora Network edge hosts",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test tests/"
+    "test": "node --test"
   }
 }
 ```
@@ -1018,7 +1018,7 @@ Expected: PASS, 6 тестов
 
 - [ ] **Step 6: Прогнать весь набор**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS, 21 тест (6 country + 6 markup + 3 app + 6 dist)
 
 - [ ] **Step 7: Коммит** (без `dist/` — он коммитится в Task 9, когда состав файлов окончателен)
@@ -1189,7 +1189,7 @@ rm faces.tmp.css
 
 - [ ] **Step 6: Убедиться, что тесты проходят**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS — все тесты, включая 4 новых про шрифты и бюджет из `tests/dist.test.mjs`
 
 Если суммарный размер шрифтов превысил 100 KB: единственное место, где используется Inter 500, — правило `.eyebrow`. Поменять там `font-weight: 500` на `400`, удалить оба файла `inter-500-*.woff2`, соответствующие `@font-face` и обе строки из списка `FILES` в тесте.
@@ -1509,7 +1509,7 @@ git commit -m "feat: фрагмент nginx и установщик для но�
 
 - [ ] **Step 1: Собрать и прогнать все тесты**
 
-Run: `node build.mjs && node --test tests/`
+Run: `node build.mjs && node --test`
 Expected: PASS — все тесты; в отчёте сборки `index.html` заметно меньше 30 KB, итог заметно меньше 250 KB
 
 - [ ] **Step 2: Проверить страницу глазами**
@@ -1528,7 +1528,7 @@ Expected: PASS — все тесты; в отчёте сборки `index.html` 
 ## Сборка
 
     node build.mjs      # собирает dist/
-    node --test tests/  # прогоняет проверки
+    node --test  # прогоняет проверки
 
 Зависимостей нет — нужен только Node 20 или новее.
 
@@ -1608,7 +1608,7 @@ tools/          разовые скрипты, в сборке не участв
 ## Команды
 
     node build.mjs      сборка в dist/
-    node --test tests/  все проверки
+    node --test  все проверки
 
 ## Инварианты
 
