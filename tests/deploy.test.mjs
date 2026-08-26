@@ -38,6 +38,23 @@ test('каждый location несёт свои заголовки', () => {
   }
 });
 
+// Git на Windows не хранит бит исполнения сам: если режим в индексе слетит на
+// 100644, после клона на ноду скрипт откажется запускаться — Permission denied.
+test('install.sh помечен исполняемым в индексе git', () => {
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  let line;
+  try {
+    line = execFileSync('git', ['ls-files', '-s', 'deploy/install.sh'], {
+      cwd: root,
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    return; // не git-репозиторий: проверять нечего
+  }
+  if (line === '') return; // файл ещё не добавлен в индекс
+  assert.match(line, /^100755\s/, `режим ${line.split(/\s/)[0]}, а нужен 100755`);
+});
+
 test('установщик синтаксически корректен и защищён от частичного выполнения', () => {
   const sh = installer();
   assert.match(sh, /^#!\/usr\/bin\/env bash/);
