@@ -59,6 +59,30 @@ test('установщик синтаксически корректен и за
   const sh = installer();
   assert.match(sh, /^#!\/usr\/bin\/env bash/);
   assert.match(sh, /set -euo pipefail/);
-  assert.match(sh, /nginx -t/);
+  assert.match(sh, /\$NGINX_CMD -t/, 'конфигурация должна проверяться перед перезагрузкой');
   execFileSync('bash', ['-n', DEPLOY + 'install.sh'], { stdio: 'pipe' });
+});
+
+// На ноде nginx крутится в контейнере: бинарника в PATH нет, а фрагмент,
+// положенный на хост, внутри контейнера может не существовать. Обе ситуации
+// установщик обязан пережить, не стирая уже сделанную работу.
+test('установщик готов к nginx в контейнере', () => {
+  const sh = installer();
+  assert.match(sh, /--snippet-dst/, 'путь фрагмента должен настраиваться');
+  assert.match(sh, /--nginx\b/, 'команда вызова nginx должна настраиваться');
+  assert.match(sh, /docker ps/, 'контейнер с nginx должен находиться сам');
+  assert.match(
+    sh,
+    /docker exec "\$DOCKER_NGINX" test -f "\$SNIPPET_DST"/,
+    'видимость фрагмента внутри контейнера нужно проверять, а не угадывать по путям',
+  );
+});
+
+test('ненайденный nginx не приводит к откату фрагмента', () => {
+  const sh = installer();
+  // Ветка «nginx не найден» обязана заканчиваться предупреждением, а не rm.
+  const branch = sh.slice(sh.indexOf('    # Фрагмент инертен'));
+  assert.ok(branch.length > 0, 'нет ветки с ненайденным nginx');
+  assert.doesNotMatch(branch, /rm -f "\$SNIPPET_DST"/, 'фрагмент стирать нельзя: он инертен');
+  assert.match(branch, /ВНИМАНИЕ/, 'пользователю нужно сказать, что проверка не выполнялась');
 });
