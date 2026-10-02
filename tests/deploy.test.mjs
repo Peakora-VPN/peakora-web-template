@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DEPLOY = fileURLToPath(new URL('../deploy/', import.meta.url));
@@ -86,3 +88,46 @@ test('ненайденный nginx не приводит к откату фра�
   assert.doesNotMatch(branch, /rm -f "\$SNIPPET_DST"/, 'фрагмент стирать нельзя: он инертен');
   assert.match(branch, /ВНИМАНИЕ/, 'пользователю нужно сказать, что проверка не выполнялась');
 });
+
+test('404 сохраняет CSP и политику referer при собственных add_header', () => {
+  const block = snippet().match(/location\s*=\s*\/404\.html\s*\{([^}]+)\}/)[1];
+  assert.match(block, /Referrer-Policy no-referrer always;/);
+  assert.match(block, /Content-Security-Policy .* always;/);
+});
+
+for (const command of ['fixture-nginx', 'fixture-nginx fixture-container']) {
+  test(`reload использует тот же --nginx executor: ${command}`, () => {
+    const fixture = mkdtempSync(path.join(tmpdir(), 'peakora-nginx-test-'));
+    const toBashPath = p => p.replaceAll('\\', '/').replace(/^([A-Za-z]):/, (_, drive) => `/${drive.toLowerCase()}`);
+    try {
+      mkdirSync(path.join(fixture, 'bin'));
+      mkdirSync(path.join(fixture, 'html'));
+      mkdirSync(path.join(fixture, 'deploy', 'nginx'), { recursive: true });
+      mkdirSync(path.join(fixture, 'dist'));
+      writeFileSync(path.join(fixture, 'deploy', 'install.sh'), installer());
+      writeFileSync(path.join(fixture, 'deploy', 'nginx', 'peakora-node.conf'), snippet());
+      writeFileSync(path.join(fixture, 'dist', 'index.html'), '<!doctype html><title>Fixture</title>');
+      for (const name of ['fixture-nginx', 'systemctl']) {
+        writeFileSync(path.join(fixture, 'bin', name),
+          `#!/usr/bin/env bash\nprintf '${name} %s\\n' "$*" >> "$PEAKORA_TEST_ROOT/calls.log"\nexit 0\n`);
+      }
+      execFileSync('bash', ['-c', `
+        export PATH="$PEAKORA_TEST_ROOT/bin:$PATH"
+        chmod +x "$PEAKORA_TEST_ROOT/bin/fixture-nginx" "$PEAKORA_TEST_ROOT/bin/systemctl"
+        bash "$PEAKORA_TEST_INSTALLER" --root "$PEAKORA_TEST_ROOT/html" \
+          --snippet-dst "$PEAKORA_TEST_ROOT/snippet.conf" --nginx "$PEAKORA_TEST_COMMAND"
+      `], { encoding: 'utf8', env: {
+        ...process.env,
+        PEAKORA_TEST_ROOT: toBashPath(fixture),
+        PEAKORA_TEST_INSTALLER: toBashPath(path.join(fixture, 'deploy', 'install.sh')),
+        PEAKORA_TEST_COMMAND: command,
+      } });
+      assert.deepEqual(readFileSync(path.join(fixture, 'calls.log'), 'utf8').trim().split('\n'),
+        [`${command} -t`, `${command} -s reload`]);
+    } finally {
+      assert.equal(path.dirname(path.resolve(fixture)), path.resolve(tmpdir()));
+      assert.ok(path.basename(fixture).startsWith('peakora-nginx-test-'));
+      rmSync(fixture, { recursive: true, force: true });
+    }
+  });
+}
