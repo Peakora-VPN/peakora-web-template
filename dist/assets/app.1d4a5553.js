@@ -82,17 +82,20 @@ export function applyConnection(doc, nav, country) {
   return phases;
 }
 
-export function wireCopyButtons(doc, clipboard, schedule = setTimeout) {
+export function wireCopyButtons(doc, clipboard, schedule = setTimeout, cancel = clearTimeout) {
   if (!clipboard || typeof clipboard.writeText !== 'function') return 0;
   const buttons = doc.querySelectorAll('[data-copy]');
   for (const button of buttons) {
+    const original = button.textContent;
+    let timer;
     button.addEventListener('click', () => {
-      const original = button.textContent;
       clipboard.writeText(button.getAttribute('data-copy')).then(
         () => {
           button.textContent = 'Copied';
           button.setAttribute('data-copied', '');
-          schedule(() => {
+          if (timer !== undefined) cancel(timer);
+          timer = schedule(() => {
+            timer = undefined;
             button.textContent = original;
             button.removeAttribute('data-copied');
           }, 1600);

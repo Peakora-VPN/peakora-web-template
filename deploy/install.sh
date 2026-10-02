@@ -78,11 +78,8 @@ find_nginx() {
 
 # $NGINX_CMD намеренно без кавычек: он может быть многословным («docker exec … nginx»).
 reload_nginx() {
-  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet nginx 2>/dev/null; then
-    systemctl reload nginx
-  else
-    $NGINX_CMD -s reload
-  fi
+  # Reload the same instance whose configuration was tested.
+  $NGINX_CMD -s reload
 }
 
 if [ ! -f "$DIST/index.html" ]; then

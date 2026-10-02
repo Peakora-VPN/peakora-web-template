@@ -146,5 +146,37 @@ test('без буфера обмена кнопки просто не подкл
   const doc = fakeDoc([], [button]);
   assert.equal(wireCopyButtons(doc, null), 0);
   assert.equal(wireCopyButtons(doc, {}), 0);
-  assert.deepEqual(button.listeners, {});
+    assert.deepEqual(button.listeners, {});
+});
+
+test('повторное копирование продлевает подтверждение и возвращает исходную подпись', async () => {
+  const button = el('button');
+  button.textContent = 'Copy';
+  button.setAttribute('data-copy', 'fixture@example.invalid');
+  const timers = new Map();
+  let nextId = 0;
+  wireCopyButtons(fakeDoc([], [button]), { writeText: async () => {} },
+    callback => { const id = nextId++; timers.set(id, callback); return id; },
+    id => timers.delete(id));
+  button.listeners.click[0]();
+  await Promise.resolve();
+  button.listeners.click[0]();
+  await Promise.resolve();
+  assert.equal(timers.size, 1, 'первый таймер должен быть отменён');
+  [...timers.values()][0]();
+  assert.equal(button.textContent, 'Copy');
+  assert.equal(button.getAttribute('data-copied'), null);
+});
+
+test('отказ буфера обмена не показывает ложное подтверждение', async () => {
+  const button = el('button');
+  button.textContent = 'Copy';
+  const timers = [];
+  wireCopyButtons(fakeDoc([], [button]), { writeText: async () => { throw new Error('denied'); } },
+    callback => timers.push(callback));
+  button.listeners.click[0]();
+  await Promise.resolve();
+  assert.equal(button.textContent, 'Copy');
+  assert.equal(button.getAttribute('data-copied'), null);
+  assert.equal(timers.length, 0);
 });
