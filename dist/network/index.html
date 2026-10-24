@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Network — Peakora Network</title>
-    <meta name="description" content="How a request moves through Peakora Network: ingress, termination, routing and delivery." />
+    <meta name="description" content="A practical guide to name resolution, transport, connection reuse and response delivery." />
     <meta name="application-name" content="Peakora Network" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="color-scheme" content="dark" />
@@ -14,14 +14,14 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Peakora Network" />
     <meta property="og:title" content="Network — Peakora Network" />
-    <meta property="og:description" content="How a request moves through Peakora Network: ingress, termination, routing and delivery." />
+    <meta property="og:description" content="A practical guide to name resolution, transport, connection reuse and response delivery." />
     <meta property="og:locale" content="en_US" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/assets/styles.ec17f326.css" />
-    <script type="module" src="/assets/app.1d4a5553.js"></script>
+    <link rel="stylesheet" href="/assets/styles.af24aa98.css" />
+    <script type="module" src="/assets/app.62c90f0f.js"></script>
   </head>
   <body>
     <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
@@ -47,8 +47,8 @@
         <div class="wrap band-grid">
           <p class="rail-label">Peakora Network / Network</p>
           <div class="band-body">
-            <h1>How a request moves</h1>
-            <p class="lede">Four stages, in the order they happen. This host performs the first two of them for you right now.</p>
+            <h1>Inside the request path.</h1>
+            <p class="lede">A connection is a sequence of decisions and exchanges. Understanding its stages makes measurements more useful and network behavior easier to explain.</p>
           </div>
         </div>
       </section>
@@ -59,24 +59,24 @@
           <div class="band-body">
             <ol class="path">
               <li>
-                <p class="path-step mono">01 / Ingress</p>
-                <h3>The connection lands at the nearest location</h3>
-                <p>Client resolvers are answered with the location closest to them, so the first packet travels the short way rather than across an ocean.</p>
+                <p class="path-step mono">01 / Resolve</p>
+                <h3>A hostname becomes an address</h3>
+                <p>Your browser resolves this host's name before it can connect. If the answer is already cached, there may be no DNS phase to show.</p>
               </li>
               <li>
-                <p class="path-step mono">02 / Termination</p>
-                <h3>TLS ends here, not further in</h3>
-                <p>The handshake completes at the edge host. That is the number you saw on the front page: it is short because the host answering it is near you.</p>
+                <p class="path-step mono">02 / Connect</p>
+                <h3>The browser establishes a connection</h3>
+                <p>Connection and secure handshake timings appear when the browser reports them. A reused connection skips this work; newer transports may expose different timing boundaries.</p>
               </li>
               <li>
-                <p class="path-step mono">03 / Routing</p>
-                <h3>Onward paths are chosen, and re-chosen</h3>
-                <p>Each location carries more than one upstream. When a path degrades, traffic moves to another one instead of waiting for it to recover.</p>
+                <p class="path-step mono">03 / Request</p>
+                <h3>The browser waits for the first byte</h3>
+                <p>The TTFB phase measures the interval from sending the request to receiving the start of the response. It includes network travel and the time taken to prepare the response.</p>
               </li>
               <li>
                 <p class="path-step mono">04 / Delivery</p>
-                <h3>The response comes back the same short way</h3>
-                <p>The return path reuses the connection already established, so subsequent requests skip the lookup and the handshake entirely.</p>
+                <h3>The response reaches your browser</h3>
+                <p>The transfer phase ends when the page response has arrived. It does not include every image, font or stylesheet, and it is not a bandwidth test.</p>
               </li>
             </ol>
           </div>
@@ -85,20 +85,40 @@
 
       <section class="band">
         <div class="wrap band-grid">
-          <p class="rail-label">Operations</p>
+          <p class="rail-label">Protocol foundations</p>
           <div class="band-body">
-            <h2>One baseline, many locations</h2>
-            <p class="lede">Every location is built from the same configuration and serves the same content. A location differs from its neighbours only in where it sits, which is why this page can name its country without knowing anything else about it.</p>
-            <div class="grid grid-2">
+            <h2>Separate responsibilities, shared purpose.</h2>
+            <p class="lede">Different protocols solve different parts of delivery. Keeping those responsibilities distinct helps explain what a browser can observe.</p>
+            <div class="grid">
               <article class="panel card">
-                <h3>Identical by construction</h3>
-                <p>Hosts are provisioned from one baseline. Nothing is configured by hand on an individual location.</p>
+                <h3>Name resolution</h3>
+                <p>DNS connects names to addresses. Its answer may be cached by the browser, the operating system or a resolver, so a lookup is not always visible in one page load.</p>
               </article>
               <article class="panel card">
-                <h3>Watched continuously</h3>
-                <p>Reachability and capacity are checked from outside the location, not only from within it.</p>
+                <h3>Secure transport</h3>
+                <p>A secure handshake establishes how a connection will protect data in transit. The transport and protocol in use affect which timing boundaries the browser reports.</p>
+              </article>
+              <article class="panel card">
+                <h3>HTTP delivery</h3>
+                <p>HTTP describes the exchange of requests and responses. The negotiated version belongs to this connection; it is not a statement about every client or network path.</p>
               </article>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="reading-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Reading the signals</p>
+          <div class="band-body">
+            <h2 id="reading-title">A measurement needs its context.</h2>
+            <div class="grid grid-2">
+              <article class="panel card"><h3>Fresh and reused connections</h3><p>A fresh connection may include resolution and a handshake. A reused one can move directly to the request. Missing setup phases can therefore reflect useful reuse rather than missing work.</p></article>
+              <article class="panel card"><h3>One response and a complete page</h3><p>The main document is only one resource. Styles, fonts and images can arrive separately. A document transfer duration does not describe the time needed to render every part of a page.</p></article>
+              <article class="panel card"><h3>Waiting and transferring</h3><p>Time to first byte includes the request's travel and response preparation. Transfer time begins when the response starts arriving. A change in one can happen without a similar change in the other.</p></article>
+              <article class="panel card"><h3>A sample and a pattern</h3><p>One observation is a starting point. Repeated behavior, timestamps and the scope of affected clients are needed to understand a broader issue. A fast sample is not an uptime record.</p></article>
+            </div>
+            <p class="band-more"><a href="/#technical-notes">Open the browser measurement section</a></p>
           </div>
         </div>
       </section>
@@ -109,20 +129,24 @@
           <div class="band-body">
             <div class="faq">
               <details>
-                <summary>Why does this hostname start with two letters?</summary>
-                <p>The prefix is an ISO 3166-1 country code naming the location. Your browser turns it into a country name locally, using its own region data. The page carries no list of locations, so nothing about the rest of the footprint is published here.</p>
+                <summary>Why are some connection phases absent?</summary>
+                <p>A cached lookup or a reused connection can remove setup work from a navigation. Browsers can also restrict or round timing data. The readout omits phases reported as zero rather than inventing a duration for them.</p>
               </details>
               <details>
-                <summary>Why is there nothing to log into?</summary>
-                <p>This host serves static content and nothing else. Operational tooling is not exposed on it, which is why every other path returns a plain 404.</p>
+                <summary>Why is the negotiated protocol sometimes unavailable?</summary>
+                <p>A browser does not always expose the protocol identifier for a navigation. When the value is absent, the page leaves it unspecified rather than inferring it from the address or a connection duration.</p>
+              </details>
+              <details>
+                <summary>Is the transfer duration a speed test?</summary>
+                <p>No. A small page response is a different workload from a sustained transfer, and it can be affected by caching and timing precision. The reading describes this response, not the capacity of your connection.</p>
               </details>
               <details>
                 <summary>The timings look different each time I load the page.</summary>
-                <p>They are your measurements, not ours. A reused connection skips the lookup and the handshake, so those stages disappear from the readout entirely on a second load.</p>
+                <p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable.</p>
               </details>
               <details>
                 <summary>How do I report abuse?</summary>
-                <p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with timestamps in UTC and the address you observed. That is enough to locate the traffic.</p>
+                <p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with timestamps in UTC and the hostname or address you observed. These details help us investigate.</p>
               </details>
             </div>
           </div>
@@ -138,12 +162,13 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
             <span class="brand-name">Peakora <b>Network</b></span>
           </a>
-          <p>Distributed edge infrastructure. This host serves one location of it.</p>
+          <p>Distributed edge infrastructure. A considered approach to connections, delivery and network operations.</p>
         </div>
         <div class="foot-col">
           <p class="rail-label">Site</p>
           <ul>
             <li><a href="/">Overview</a></li>
+            <li><a href="/#infrastructure">Infrastructure</a></li>
             <li><a href="/network/">Network</a></li>
           </ul>
         </div>

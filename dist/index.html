@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Peakora Network — Edge infrastructure</title>
-    <meta name="description" content="Peakora Network operates distributed edge infrastructure. This host serves one of its locations." />
+    <meta name="description" content="Explore Peakora Network's approach to edge delivery, routing and infrastructure operations." />
     <meta name="application-name" content="Peakora Network" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="color-scheme" content="dark" />
@@ -14,14 +14,14 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Peakora Network" />
     <meta property="og:title" content="Peakora Network — Edge infrastructure" />
-    <meta property="og:description" content="Peakora Network operates distributed edge infrastructure. This host serves one of its locations." />
+    <meta property="og:description" content="Explore Peakora Network's approach to edge delivery, routing and infrastructure operations." />
     <meta property="og:locale" content="en_US" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/assets/styles.ec17f326.css" />
-    <script type="module" src="/assets/app.1d4a5553.js"></script>
+    <link rel="stylesheet" href="/assets/styles.af24aa98.css" />
+    <script type="module" src="/assets/app.62c90f0f.js"></script>
   </head>
   <body>
     <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
@@ -44,52 +44,176 @@
     <main id="main">
 
       <section class="band band-hero">
-        <div class="wrap band-grid">
-          <p class="rail-label">Peakora Network / Edge</p>
-          <div class="band-body">
-            <h1 id="node-headline">Edge node</h1>
-            <p class="lede">You have reached one of the hosts Peakora Network runs at the edge of its footprint. The readout below is your own connection to this host, measured by your browser.</p>
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <p class="rail-label">Peakora Network</p>
+            <h1>Infrastructure<br />at the edge.</h1>
+            <p class="lede">A considered approach to delivery, routing and the connections between them.</p>
+            <p class="hero-description">Peakora Network operates distributed edge infrastructure. We focus on the network boundary: where connections begin, requests take shape and delivery becomes tangible.</p>
+            <div class="hero-actions">
+              <a class="button" href="#infrastructure">Explore the infrastructure</a>
+              <a class="text-link" href="#contact">Get in touch</a>
+            </div>
           </div>
+          <aside class="panel network-visual" aria-labelledby="journey-title" data-tabs>
+            <p class="visual-caption mono">The connection lifecycle</p>
+            <h2 id="journey-title">From request to response</h2>
+            <p class="visual-intro">Follow the stages that turn a name into a delivered page.</p>
+            <div class="journey-tabs" data-tab-list aria-label="Request stages" hidden>
+              <button type="button" id="tab-resolve" data-tab aria-controls="journey-resolve"><span class="step-number" aria-hidden="true">01</span>Resolve</button>
+              <button type="button" id="tab-connect" data-tab aria-controls="journey-connect"><span class="step-number" aria-hidden="true">02</span>Connect</button>
+              <button type="button" id="tab-request" data-tab aria-controls="journey-request"><span class="step-number" aria-hidden="true">03</span>Request</button>
+              <button type="button" id="tab-deliver" data-tab aria-controls="journey-deliver"><span class="step-number" aria-hidden="true">04</span>Deliver</button>
+            </div>
+            <section class="journey-panel" id="journey-resolve" data-tab-panel>
+              <h3>Start with a name</h3>
+              <p>Name resolution connects a domain to an address. A cached answer can let the browser move straight to the next stage.</p>
+            </section>
+            <section class="journey-panel" id="journey-connect" data-tab-panel>
+              <h3>Establish the connection</h3>
+              <p>The browser negotiates a transport and, for a secure connection, completes a handshake. An existing connection may be reused.</p>
+            </section>
+            <section class="journey-panel" id="journey-request" data-tab-panel>
+              <h3>Send the request</h3>
+              <p>The request crosses the network and the server prepares a response. The wait for its first byte includes both parts of that journey.</p>
+            </section>
+            <section class="journey-panel" id="journey-deliver" data-tab-panel>
+              <h3>Bring the response back</h3>
+              <p>The response arrives in the browser, ready to be interpreted. The page can then request its styles, fonts and other resources.</p>
+            </section>
+            <a class="visual-link" href="/network/">Explore the network guide</a>
+          </aside>
         </div>
       </section>
 
-      <section class="band" aria-labelledby="hs-title">
+      <section class="band" id="approach" aria-labelledby="approach-title">
         <div class="wrap band-grid">
-          <p class="rail-label">Handshake</p>
+          <p class="rail-label">Our approach</p>
           <div class="band-body">
-            <div class="panel instrument">
-              <div class="instrument-head">
-                <h2 id="hs-title">This connection</h2>
-                <p class="instrument-meta mono" id="hs-meta">not measured</p>
+            <div class="approach-grid">
+              <div>
+                <h2 id="approach-title">The connection is only the beginning.</h2>
+                <p class="lede">Good infrastructure brings its parts into focus. Delivery, transport and operations each have a role to play.</p>
               </div>
-              <ol class="track" id="hs-track">
-                <li class="track-note">Timing appears here once the page finishes loading.</li>
-              </ol>
-              <p class="instrument-foot mono">Measured in your browser from the Navigation Timing API. Nothing is sent anywhere.</p>
+              <dl class="principles">
+                <div><dt>Clear boundaries</dt><dd>Separate connection setup, request handling and response delivery so each stage can be understood.</dd></div>
+                <div><dt>Observable behavior</dt><dd>Use measurements with context. One fast request tells a different story from a dependable path over time.</dd></div>
+                <div><dt>Practical operations</dt><dd>Make changes deliberately and keep enough context to investigate when behavior differs from expectations.</dd></div>
+              </dl>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="band">
+      <section class="band" id="infrastructure" aria-labelledby="infrastructure-title">
         <div class="wrap band-grid">
-          <p class="rail-label">What this network does</p>
+          <p class="rail-label">Infrastructure</p>
           <div class="band-body">
-            <div class="grid">
-              <article class="panel card">
-                <h3>Edge delivery</h3>
-                <p>Connections terminate at the location nearest to the client, which keeps round trips short and predictable.</p>
-              </article>
-              <article class="panel card">
-                <h3>Transit &amp; routing</h3>
-                <p>Every location is provisioned with more than one upstream, so traffic can move away from a degraded path.</p>
-              </article>
-              <article class="panel card">
-                <h3>Operations</h3>
-                <p>Locations are built from a single configuration baseline and watched continuously for capacity and reachability.</p>
-              </article>
+            <h2 id="infrastructure-title">Different layers. One network.</h2>
+            <p class="lede">Explore the concerns that shape edge infrastructure, from the first connection to the work of keeping systems understandable.</p>
+            <div class="area-explorer panel" data-tabs>
+              <div class="area-tabs" data-tab-list aria-label="Infrastructure areas" hidden>
+                <button type="button" id="tab-delivery" data-tab aria-controls="area-delivery"><span>Edge delivery</span><small>At the network boundary</small></button>
+                <button type="button" id="tab-routing" data-tab aria-controls="area-routing"><span>Transit &amp; routing</span><small>The path between systems</small></button>
+                <button type="button" id="tab-operations" data-tab aria-controls="area-operations"><span>Operations</span><small>The work around the network</small></button>
+              </div>
+              <section class="area-panel" id="area-delivery" data-tab-panel>
+                <p class="area-eyebrow mono">Edge delivery</p>
+                <h3>Where a request meets the network.</h3>
+                <p>The edge is a boundary between a client and the systems serving it. Name resolution, transport negotiation and response delivery all contribute to the experience on the other side.</p>
+                <dl class="area-points">
+                  <div><dt>Connection setup</dt><dd>Account for the cost of establishing a new connection and the benefit of reusing one.</dd></div>
+                  <div><dt>Protocol negotiation</dt><dd>Let the client and server agree on a supported way to exchange requests and responses.</dd></div>
+                  <div><dt>Response delivery</dt><dd>Understand the difference between waiting for a response and transferring its content.</dd></div>
+                </dl>
+              </section>
+              <section class="area-panel" id="area-routing" data-tab-panel>
+                <p class="area-eyebrow mono">Transit &amp; routing</p>
+                <h3>The path matters as much as the destination.</h3>
+                <p>A connection depends on the networks between its endpoints. Physical distance is only part of the picture: routing decisions, congestion and transport behavior also affect delivery.</p>
+                <dl class="area-points">
+                  <div><dt>Path awareness</dt><dd>Consider the complete route rather than treating the destination as the only variable.</dd></div>
+                  <div><dt>Changing conditions</dt><dd>Expect a route's behavior to vary with the network, the client and the time of the request.</dd></div>
+                  <div><dt>End-to-end context</dt><dd>Read latency and transfer measurements together to understand where time is spent.</dd></div>
+                </dl>
+              </section>
+              <section class="area-panel" id="area-operations" data-tab-panel>
+                <p class="area-eyebrow mono">Operations</p>
+                <h3>Infrastructure is an ongoing practice.</h3>
+                <p>Deployment is one moment in a system's life. Useful operations also depend on deliberate changes, clear observations and reports that carry enough context to act on.</p>
+                <dl class="area-points">
+                  <div><dt>Repeatable changes</dt><dd>Keep a clear baseline and make the effect of each change possible to review.</dd></div>
+                  <div><dt>Useful observations</dt><dd>Distinguish a single browser reading from a wider pattern of network behavior.</dd></div>
+                  <div><dt>Incident context</dt><dd>Include a time, the affected service and what you observed when reporting an issue.</dd></div>
+                </dl>
+              </section>
             </div>
-            <p class="band-more"><a href="/network/">How a request moves through the network</a></p>
+            <p class="band-more"><a href="/network/">Read the network guide</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="operations-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Operating principles</p>
+          <div class="band-body">
+            <h2 id="operations-title">Consistency is an operational choice.</h2>
+            <p class="lede">The details around a connection matter just as much as the connection itself. These principles guide how we think about infrastructure.</p>
+            <div class="faq">
+              <details name="principles" open>
+                <summary>Understand the path before drawing conclusions</summary>
+                <p>A slow page can have several causes: resolution, connection setup, waiting for a response or transfer. Looking at those stages separately makes the next question more useful than treating every delay as the same problem.</p>
+              </details>
+              <details name="principles">
+                <summary>Make changes deliberate and reviewable</summary>
+                <p>A repeatable baseline makes differences easier to understand. Changes should have a clear purpose, a way to check their effect and a path back when the result is unexpected.</p>
+              </details>
+              <details name="principles">
+                <summary>Keep the context that makes a report actionable</summary>
+                <p>A timestamp in UTC, the affected address and a description of what happened are useful starting points. Whether an issue repeats, affects one client or appears across several networks also helps narrow the investigation.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="questions-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Common questions</p>
+          <div class="band-body">
+            <h2 id="questions-title">A little more context.</h2>
+            <div class="faq">
+              <details name="questions"><summary>What does edge infrastructure mean?</summary><p>The edge is the client-facing boundary of a network or service. It is where connections are handled before requests move through the rest of a system. Delivery, transport and operational decisions meet at that boundary.</p></details>
+              <details name="questions"><summary>Why can two visits feel different?</summary><p>The browser may reuse a connection or a cached name lookup. Network conditions can change too. The result is a different balance of setup, waiting and transfer time, even when the requested page is the same.</p></details>
+              <details name="questions"><summary>How can I learn more about the request path?</summary><p>The <a href="/network/">network guide</a> walks through resolution, connection setup, requests and delivery. Optional browser measurements below show the phases reported for this page.</p></details>
+              <details name="questions"><summary>How do I contact the network team?</summary><p>Use the <a href="#contact">contact address below</a> for network enquiries, operational issues and abuse reports. For an incident, include timestamps in UTC and a description of the behavior you observed.</p></details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" id="technical-notes" aria-label="Technical notes">
+        <div class="wrap band-grid">
+          <p class="rail-label">Technical notes</p>
+          <div class="band-body">
+            <p class="regional-note">Regional designation <span id="node-location">Edge node</span></p>
+            <details class="connection-details">
+              <summary>View this page's connection timing</summary>
+              <div class="panel instrument" id="connection">
+                <div class="instrument-head">
+                  <div><h2 id="hs-title">This page load</h2><p class="instrument-meta mono" id="hs-meta">Not measured</p></div>
+                  <div class="instrument-total"><p id="hs-total">—</p><span>Measured phases</span></div>
+                </div>
+                <ol class="track" id="hs-track" aria-label="Connection phases"><li class="track-note">Your browser has not exposed timing for this page.</li></ol>
+                <dl class="connection-metrics">
+                  <div><dt>Waiting for response</dt><dd id="metric-ttfb">—</dd></div>
+                  <div><dt>Response transfer</dt><dd id="metric-transfer">—</dd></div>
+                  <div><dt>Negotiated protocol</dt><dd id="metric-protocol">—</dd></div>
+                </dl>
+                <p class="instrument-foot">Readings come from this page's navigation timing and stay in your browser. Zero or unreported phases are omitted; small segments are widened for readability. This is one page load, not an availability or bandwidth test.</p>
+                <noscript><p class="instrument-foot">JavaScript is required for local timing readings.</p></noscript>
+              </div>
+            </details>
           </div>
         </div>
       </section>
@@ -98,15 +222,80 @@
         <div class="wrap band-grid">
           <p class="rail-label">Contact</p>
           <div class="band-body">
-            <h2>Reaching us</h2>
-            <p class="lede">Operational issues and abuse reports go to one address. Include timestamps in UTC and the address you observed — that is enough to find the traffic.</p>
+            <h2>Let's talk about the network.</h2>
+            <p class="lede">For network enquiries, operational issues and abuse reports, reach the team by email. Include the affected address, timestamps in UTC and what you observed when reporting an incident.</p>
+            <div class="contact-actions">
+              <button class="button request-open" type="button" data-open-request hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+                Prepare a request
+              </button>
+              <span class="contact-alternative">Or reach us directly</span>
+            </div>
             <p class="contact-line">
               <a class="contact-mail mono" href="mailto:abuse@peakora.network">abuse@peakora.network</a>
-              <button class="copy mono" type="button" data-copy="abuse@peakora.network">Copy</button>
+              <button class="copy mono" type="button" data-copy="abuse@peakora.network" aria-label="Copy contact email" aria-live="polite" hidden>Copy</button>
             </p>
           </div>
         </div>
       </section>
+
+      <dialog class="request-dialog" id="request-dialog" aria-labelledby="request-title" aria-describedby="request-intro">
+        <div class="request-header">
+          <div>
+            <p class="request-eyebrow mono">Peakora Network / Contact</p>
+            <h2 id="request-title" tabindex="-1">Compose a request</h2>
+            <p id="request-intro">Choose a topic and give us a little context.</p>
+          </div>
+          <button class="request-close" type="button" data-close-request aria-label="Close request editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <form id="request-form" method="dialog" novalidate autocomplete="off">
+          <div class="request-form-body">
+            <p class="request-required">All fields are required.</p>
+            <p class="request-error-summary" id="request-errors" role="alert" hidden>Please check the highlighted fields.</p>
+            <div class="request-field">
+              <label for="request-topic">What can we help with?</label>
+              <select id="request-topic" name="topic" required aria-describedby="request-topic-error">
+                <option value="">Select a topic</option>
+                <option value="Network enquiry">Network enquiry</option>
+                <option value="Technical issue">Technical issue</option>
+                <option value="Abuse report">Abuse report</option>
+              </select>
+              <p class="request-field-error" id="request-topic-error" hidden></p>
+            </div>
+            <div class="request-row">
+              <div class="request-field">
+                <label for="request-name">Your name</label>
+                <input id="request-name" name="name" type="text" minlength="2" maxlength="80" required aria-describedby="request-name-error" placeholder="Alex Morgan" />
+                <p class="request-field-error" id="request-name-error" hidden></p>
+              </div>
+              <div class="request-field">
+                <label for="request-email">Email address</label>
+                <input id="request-email" name="email" type="email" maxlength="254" required aria-describedby="request-email-error" placeholder="you@example.com" spellcheck="false" />
+                <p class="request-field-error" id="request-email-error" hidden></p>
+              </div>
+            </div>
+            <div class="request-field">
+              <label for="request-subject">Subject</label>
+              <input id="request-subject" name="subject" type="text" minlength="6" maxlength="120" required aria-describedby="request-subject-error" placeholder="A short summary of your request" />
+              <p class="request-field-error" id="request-subject-error" hidden></p>
+            </div>
+            <div class="request-field">
+              <label for="request-message">Request details</label>
+              <textarea id="request-message" name="message" minlength="30" maxlength="2000" rows="6" required aria-describedby="request-message-hint request-count request-message-error" placeholder="Describe your question or what happened, and the outcome you expected."></textarea>
+              <div class="request-field-meta"><p id="request-message-hint">For incidents, include the affected service and timestamps in UTC.</p><span id="request-count" class="mono">0 / 2000</span></div>
+              <p class="request-field-error" id="request-message-error" hidden></p>
+            </div>
+          </div>
+          <div class="request-footer"><button class="request-secondary" type="button" data-close-request>Cancel</button><button class="button" type="submit">Send request</button></div>
+        </form>
+        <section class="request-complete" id="request-complete" aria-label="Request complete" hidden>
+          <div class="request-complete-body">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="m15 24 6 6 12-13"/></svg>
+            <p>Thanks for taking the time to share the details.</p>
+          </div>
+          <div class="request-footer"><button class="button" type="button" data-close-request>Close</button></div>
+        </section>
+      </dialog>
 
     </main>
 
@@ -117,12 +306,13 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
             <span class="brand-name">Peakora <b>Network</b></span>
           </a>
-          <p>Distributed edge infrastructure. This host serves one location of it.</p>
+          <p>Distributed edge infrastructure. A considered approach to connections, delivery and network operations.</p>
         </div>
         <div class="foot-col">
           <p class="rail-label">Site</p>
           <ul>
             <li><a href="/">Overview</a></li>
+            <li><a href="/#infrastructure">Infrastructure</a></li>
             <li><a href="/network/">Network</a></li>
           </ul>
         </div>

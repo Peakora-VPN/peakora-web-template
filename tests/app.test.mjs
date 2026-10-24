@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { applyConnection, applyNode, wireCopyButtons } from '../src/app.js';
+import * as app from '../src/app.js';
+const { applyConnection, applyNode, wireCopyButtons, wireTabs, wireRequestComposer } = app;
 
 // Минимальный поддельный DOM: jsdom тянуть некуда, зависимостей в проекте нет.
 function el(tag = 'div') {
@@ -21,6 +22,7 @@ function el(tag = 'div') {
       return Object.prototype.hasOwnProperty.call(node.attrs, key) ? node.attrs[key] : null;
     },
     addEventListener(type, fn) { (node.listeners[type] ||= []).push(fn); },
+    focus() { node.focused = true; },
   };
   node.classList = { add: (name) => node.classes.add(name) };
   return node;
@@ -51,21 +53,22 @@ const FRESH = {
   responseEnd: 118,
 };
 
-test('подставляет страну, подпись узла, год и заголовок', () => {
-  const doc = fakeDoc(['node-headline', 'foot-node', 'year']);
-  applyNode(doc, 'pl.peakora.network', AT);
-  assert.equal(doc.byId.get('node-headline').textContent, 'Poland');
+test('подставляет регион и год, сохраняя название публичного сайта', () => {
+  const doc = fakeDoc(['node-location', 'foot-node', 'year']);
+  doc.title = 'Peakora Network — Edge infrastructure';
+  applyNode(doc, 'pl2.peakora.network', AT);
+  assert.equal(doc.byId.get('node-location').textContent, 'Poland');
   assert.equal(doc.byId.get('foot-node').textContent, 'PL · Poland');
   assert.equal(doc.byId.get('year').textContent, '2031');
-  assert.equal(doc.title, 'Poland — Peakora Network');
+  assert.equal(doc.title, 'Peakora Network — Edge infrastructure');
 });
 
 test('на неопознанном хосте остаётся нейтральной', () => {
-  const doc = fakeDoc(['node-headline', 'foot-node', 'year']);
+  const doc = fakeDoc(['node-location', 'foot-node', 'year']);
   applyNode(doc, 'philipp.peakora.network', AT);
-  assert.equal(doc.byId.get('node-headline').textContent, 'Edge node');
+  assert.equal(doc.byId.get('node-location').textContent, 'Edge node');
   assert.equal(doc.byId.get('foot-node').textContent, 'Edge node');
-  assert.equal(doc.title, 'Peakora Network — Edge infrastructure');
+  assert.equal(doc.title, '');
 });
 
 test('не трогает заголовок страницы без карточки узла', () => {
@@ -102,6 +105,24 @@ test('без страны подпись шкалы обходится прот�
   assert.equal(doc.byId.get('hs-meta').textContent, 'HTTP/2 · 108 ms');
 });
 
+test('сводка соединения показывает только измеренные длительности и протокол', () => {
+  const doc = fakeDoc(['hs-track', 'hs-total', 'metric-ttfb', 'metric-transfer', 'metric-protocol', 'connection']);
+  applyConnection(doc, FRESH, null);
+  assert.equal(doc.byId.get('hs-total').textContent, '108 ms');
+  assert.equal(doc.byId.get('metric-ttfb').textContent, '48 ms');
+  assert.equal(doc.byId.get('metric-transfer').textContent, '8 ms');
+  assert.equal(doc.byId.get('metric-protocol').textContent, 'HTTP/2');
+  assert.equal(doc.byId.get('connection').getAttribute('data-measured'), '');
+});
+
+test('сводка не додумывает скрытый протокол и недоступные фазы', () => {
+  const doc = fakeDoc(['hs-track', 'metric-ttfb', 'metric-transfer', 'metric-protocol']);
+  applyConnection(doc, { responseStart: 12, responseEnd: 15, nextHopProtocol: '' }, null);
+  assert.equal(doc.byId.get('metric-ttfb').textContent, '—');
+  assert.equal(doc.byId.get('metric-transfer').textContent, '3 ms');
+  assert.equal(doc.byId.get('metric-protocol').textContent, 'Not exposed');
+});
+
 test('без измерений заметка в шкале остаётся нетронутой', () => {
   const doc = fakeDoc(['hs-track', 'hs-meta']);
   const track = doc.byId.get('hs-track');
@@ -121,6 +142,7 @@ test('кнопка копирования кладёт адрес в буфер 
   const button = el('button');
   button.textContent = 'Copy';
   button.setAttribute('data-copy', 'abuse@peakora.network');
+  button.setAttribute('hidden', '');
 
   const doc = fakeDoc([], [button]);
   const written = [];
@@ -128,6 +150,7 @@ test('кнопка копирования кладёт адрес в буфер 
   const clipboard = { writeText: (text) => { written.push(text); return Promise.resolve(); } };
 
   assert.equal(wireCopyButtons(doc, clipboard, (fn) => timers.push(fn)), 1);
+  assert.equal(button.getAttribute('hidden'), null);
 
   button.listeners.click[0]();
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -179,4 +202,77 @@ test('отказ буфера обмена не показывает ложно�
   assert.equal(button.textContent, 'Copy');
   assert.equal(button.getAttribute('data-copied'), null);
   assert.equal(timers.length, 0);
+});
+
+function tabFixture(prefix) {
+  const tabs = Array.from({ length: 3 }, (_, i) => {
+    const tab = el('button');
+    tab.id = `${prefix}-tab-${i}`;
+    tab.setAttribute('aria-controls', `${prefix}-panel-${i}`);
+    return tab;
+  });
+  const panels = tabs.map(() => el('section'));
+  const list = el();
+  list.hidden = true;
+  list.querySelectorAll = () => tabs;
+  const group = el();
+  group.querySelector = () => list;
+  return { tabs, panels, list, group };
+}
+
+function tabDoc(...groups) {
+  const byId = new Map(groups.flatMap(({ tabs, panels }) =>
+    tabs.map((tab, i) => [tab.getAttribute('aria-controls'), panels[i]])));
+  return { querySelectorAll: () => groups.map((item) => item.group), getElementById: (id) => byId.get(id) };
+}
+
+test('вкладки связывают подписи с панелями и показывают выбранный раздел', () => {
+  const fixture = tabFixture('areas');
+  const { tabs, panels, list } = fixture;
+  assert.equal(wireTabs(tabDoc(fixture)), 1);
+  assert.equal(list.hidden, false);
+  assert.equal(list.getAttribute('role'), 'tablist');
+  assert.deepEqual(panels.map((panel) => panel.hidden), [false, true, true]);
+  assert.equal(panels[0].getAttribute('aria-labelledby'), tabs[0].id);
+  tabs[1].listeners.click[0]();
+  assert.deepEqual(panels.map((panel) => panel.hidden), [true, false, true]);
+  assert.deepEqual(tabs.map((tab) => tab.getAttribute('aria-selected')), ['false', 'true', 'false']);
+  assert.deepEqual(tabs.map((tab) => tab.getAttribute('tabindex')), ['-1', '0', '-1']);
+});
+
+test('вкладки доступны стрелками, Home и End и не перехватывают обычный Tab', () => {
+  const fixture = tabFixture('keys');
+  wireTabs(tabDoc(fixture));
+  for (const [from, key, to] of [[0, 'ArrowLeft', 2], [2, 'ArrowRight', 0], [0, 'End', 2], [2, 'Home', 0], [0, 'ArrowDown', 1], [1, 'ArrowUp', 0]]) {
+    let prevented = false;
+    fixture.tabs[from].listeners.keydown[0]({ key, preventDefault() { prevented = true; } });
+    assert.equal(fixture.panels[to].hidden, false, key);
+    assert.equal(fixture.tabs[to].focused, true, key);
+    assert.equal(prevented, true, key);
+  }
+  fixture.tabs[0].listeners.keydown[0]({ key: 'Tab', preventDefault() { assert.fail('Tab должен работать как обычно'); } });
+});
+
+test('две группы вкладок переключаются независимо, страницы без них работают', () => {
+  const first = tabFixture('first');
+  const second = tabFixture('second');
+  assert.equal(wireTabs(tabDoc(first, second)), 2);
+  first.tabs[2].listeners.click[0]();
+  assert.deepEqual(first.panels.map((panel) => panel.hidden), [true, true, false]);
+  assert.deepEqual(second.panels.map((panel) => panel.hidden), [false, true, true]);
+  assert.equal(wireTabs(tabDoc()), 0);
+});
+
+test('неполная разметка вкладок не прерывает подключение остальных групп', () => {
+  const broken = tabFixture('broken');
+  broken.panels[1] = null;
+  const valid = tabFixture('valid');
+  assert.equal(wireTabs(tabDoc(broken, valid)), 1);
+  assert.equal(broken.list.hidden, true);
+  assert.equal(valid.list.hidden, false);
+});
+
+test('страницы без диалога и браузеры без showModal сохраняют контакт по почте', () => {
+  assert.equal(wireRequestComposer(fakeDoc()), false);
+  assert.equal(wireRequestComposer(fakeDoc(['request-dialog'])), false);
 });

@@ -1,11 +1,10 @@
 // Чистая логика страницы. Ни одного обращения к DOM: этот модуль импортируют
 // и браузер, и тесты Node.
 
-export const SITE_NAME = 'Peakora Network';
 export const DEFAULT_ROLE = 'Edge node';
 
 // ICU резолвит эти коды, но странами они не являются.
-const NOT_A_COUNTRY = new Set(['ZZ', 'QO', 'XA', 'XB']);
+const NOT_A_COUNTRY = new Set(['ZZ', 'QO', 'XA', 'XB', 'EU', 'EZ', 'UN']);
 
 // fallback: 'none' заставляет .of() вернуть undefined для неизвестного кода —
 // это и есть проверка валидности, поэтому таблицу ISO везти не нужно.
@@ -29,25 +28,31 @@ export function regionName(code) {
 
 export function countryFromHostname(hostname) {
   if (typeof hostname !== 'string') return null;
-  const labels = hostname.trim().toLowerCase().split('.');
-  // Узлу нужно минимум <метка>.<домен>.<зона>; апекс сам по себе узлом не является.
-  if (labels.length < 3) return null;
-  const name = regionName(labels[0]);
-  return name ? { code: labels[0].toUpperCase(), name } : null;
-}
+  const host = hostname.trim().toLowerCase().replace(/\.$/, '');
+  const labels = host.split('.');
+  if (host.length > 253 || labels.length < 3 || !/^[a-z]/.test(labels.at(-1))) return null;
+  if (labels.some((label) => !/^[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?$/.test(label))) return null;
 
-// Заголовок страницы узла: страна, если опознана, иначе нейтральная роль.
-export function nodeHeadline(country) {
-  return country ? country.name : DEFAULT_ROLE;
+  // shortcut: общие составные зоны; для произвольных hosting-доменов нужен Public Suffix List.
+  const suffixLength = labels.at(-1).length === 2 && /^(?:ac|co|com|edu|gov|net|org)$/.test(labels.at(-2)) ? 3 : 2;
+  let country = null;
+  for (const label of labels.slice(0, -suffixLength)) {
+    // Явный код, а не подстрока слова: pl2, pl-2, edge-pl-2, de-fra-01.
+    const match = label.match(/^(?:(?:www|edge|node|pop|host|server|api|cdn)\d*-)?([a-z]{2})(?:\d+|(?:-[a-z]{3})?-\d+)?$/);
+    if (!match) continue;
+    const code = match[1].toUpperCase();
+    const name = regionName(code);
+    if (!name) continue;
+    // Совпадение имён допускает алиасы ICU (UK / GB), но не две разные страны.
+    if (country && country.name !== name) return null;
+    country ??= { code, name };
+  }
+  return country;
 }
 
 // Подпись в подвале — в приборной манере: код и название.
 export function nodeIdentity(country) {
   return country ? `${country.code} · ${country.name}` : DEFAULT_ROLE;
-}
-
-export function pageTitle(country) {
-  return country ? `${country.name} — ${SITE_NAME}` : `${SITE_NAME} — Edge infrastructure`;
 }
 
 // ─── Измерения соединения ───────────────────────────────────────────────────

@@ -54,10 +54,27 @@ test('навигация каркаса ведёт на страницы, кот
 
 test('главная несёт точки привязки скрипта', () => {
   const html = read('pages/index.html');
-  for (const id of ['node-headline', 'hs-track', 'hs-meta', 'contact']) {
+  for (const id of ['node-location', 'infrastructure', 'technical-notes', 'connection', 'hs-track', 'hs-meta', 'hs-total', 'metric-ttfb', 'metric-transfer', 'metric-protocol', 'contact']) {
     assert.ok(html.includes(`id="${id}"`), `нет id="${id}"`);
   }
   assert.match(html, /data-copy="\{\{CONTACT\}\}"/);
+});
+
+test('публичная главная не превращается в карточку hostname', () => {
+  const html = read('pages/index.html');
+  assert.doesNotMatch(html, /id="(?:node-headline|node-hostname|node-code|copy-host)"/);
+  assert.match(html, /<h1>Infrastructure<br\s*\/>at the edge\.<\/h1>/);
+  assert.match(html, /<details class="connection-details">/);
+});
+
+test('вкладки имеют существующие панели, скрытые до подключения скрипта кнопки и полный HTML-контент', () => {
+  const html = read('pages/index.html');
+  const panels = [...html.matchAll(/aria-controls="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(panels.length, 7);
+  assert.equal(new Set(panels).size, 7);
+  for (const id of panels) assert.match(html, new RegExp(`<section[^>]*id="${id}"[^>]*data-tab-panel>`));
+  assert.equal([...html.matchAll(/data-tab-list[^>]*hidden/g)].length, 2);
+  assert.doesNotMatch(html, /<section[^>]*data-tab-panel[^>]*hidden/);
 });
 
 test('контактный адрес нигде не вписан руками', () => {
@@ -66,6 +83,30 @@ test('контактный адрес нигде не вписан руками'
   for (const name of HTML) {
     assert.ok(!read(name).includes(site.contact), `${name}: адрес вписан вместо {{CONTACT}}`);
   }
+});
+
+test('форма обращения проверяет поля и не имеет сетевого действия', () => {
+  const html = read('pages/index.html');
+  assert.match(html, /<dialog[^>]*id="request-dialog"/);
+  assert.match(html, /<form[^>]*id="request-form"[^>]*method="dialog"[^>]*novalidate/);
+  assert.doesNotMatch(html, /<form[^>]*\saction=/);
+  assert.match(html, /data-open-request[^>]*hidden/);
+  for (const [id, min, max] of [['request-name', 2, 80], ['request-subject', 6, 120], ['request-message', 30, 2000]]) {
+    const tag = html.match(new RegExp(`<(?:input|textarea)[^>]*id="${id}"[^>]*>`))?.[0] ?? '';
+    assert.match(tag, /\brequired\b/, id);
+    assert.match(tag, new RegExp(`minlength="${min}"`), id);
+    assert.match(tag, new RegExp(`maxlength="${max}"`), id);
+    assert.match(tag, new RegExp(`aria-describedby="[^"]*${id}-error`), id);
+  }
+  assert.match(html, /<input[^>]*id="request-email"[^>]*type="email"[^>]*maxlength="254"[^>]*required/);
+  assert.match(html, /<select[^>]*id="request-topic"[^>]*required/);
+});
+
+test('форма завершается после Send request без промежуточного просмотра', () => {
+  const html = read('pages/index.html');
+  assert.ok(/<button[^>]*type="submit">Send request<\/button>/.test(html), 'нет Send request');
+  assert.ok(/id="request-complete"[^>]*hidden/.test(html), 'нет завершающего экрана');
+  assert.doesNotMatch(html, /Review request|Review your request|id="request-edit"|id="request-preview"/);
 });
 
 test('404 не перебивает свой заголовок', () => {
