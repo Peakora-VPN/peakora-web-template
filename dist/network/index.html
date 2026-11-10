@@ -20,8 +20,8 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/assets/styles.af24aa98.css" />
-    <script type="module" src="/assets/app.62c90f0f.js"></script>
+    <link rel="stylesheet" href="/assets/styles.70671539.css" />
+    <script type="module" src="/assets/app.23af917d.js"></script>
   </head>
   <body>
     <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
@@ -61,12 +61,12 @@
               <li>
                 <p class="path-step mono">01 / Resolve</p>
                 <h3>A hostname becomes an address</h3>
-                <p>Your browser resolves this host's name before it can connect. If the answer is already cached, there may be no DNS phase to show.</p>
+                <p>Your browser resolves this host's name before it can connect. If the answer is already cached, there may be no DNS phase to show. <a href="/articles/name-resolution/">How name resolution works</a></p>
               </li>
               <li>
                 <p class="path-step mono">02 / Connect</p>
                 <h3>The browser establishes a connection</h3>
-                <p>Connection and secure handshake timings appear when the browser reports them. A reused connection skips this work; newer transports may expose different timing boundaries.</p>
+                <p>Connection and secure handshake timings appear when the browser reports them. A reused connection skips this work; newer transports may expose different timing boundaries. <a href="/articles/connection-reuse/">How connection reuse skips the setup</a></p>
               </li>
               <li>
                 <p class="path-step mono">03 / Request</p>
@@ -92,7 +92,7 @@
             <div class="grid">
               <article class="panel card">
                 <h3>Name resolution</h3>
-                <p>DNS connects names to addresses. Its answer may be cached by the browser, the operating system or a resolver, so a lookup is not always visible in one page load.</p>
+                <p>DNS connects names to addresses. Its answer may be cached by the browser, the operating system or a resolver, so a lookup is not always visible in one page load. <a href="/articles/name-resolution/">Read the article</a></p>
               </article>
               <article class="panel card">
                 <h3>Secure transport</h3>
@@ -100,7 +100,7 @@
               </article>
               <article class="panel card">
                 <h3>HTTP delivery</h3>
-                <p>HTTP describes the exchange of requests and responses. The negotiated version belongs to this connection; it is not a statement about every client or network path.</p>
+                <p>HTTP describes the exchange of requests and responses. The negotiated version belongs to this connection; it is not a statement about every client or network path. <a href="/articles/reading-timings/">Read the article</a></p>
               </article>
             </div>
           </div>
@@ -119,6 +119,31 @@
               <article class="panel card"><h3>A sample and a pattern</h3><p>One observation is a starting point. Repeated behavior, timestamps and the scope of affected clients are needed to understand a broader issue. A fast sample is not an uptime record.</p></article>
             </div>
             <p class="band-more"><a href="/#technical-notes">Open the browser measurement section</a></p>
+            <p class="band-more"><a href="/articles/reading-timings/">Learn how to read the timings</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="further-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Further reading</p>
+          <div class="band-body">
+            <h2 id="further-title">Three articles behind the guide.</h2>
+            <p class="lede">Each takes one stage of the request path and looks at it closely.</p>
+            <div class="grid">
+              <article class="panel card">
+                <h3>Name resolution, from hostname to address</h3>
+                <p>How a lookup travels from the browser's cache to the authoritative server, and why a cached answer means no DNS phase to show. <a href="/articles/name-resolution/">Read the article</a></p>
+              </article>
+              <article class="panel card">
+                <h3>Connection reuse and the quiet second visit</h3>
+                <p>What a reused connection skips, why zero phases are omitted rather than drawn empty, and what still happens on every request. <a href="/articles/connection-reuse/">Read the article</a></p>
+              </article>
+              <article class="panel card">
+                <h3>Reading timings without overreading them</h3>
+                <p>What the wait for the first byte and the transfer interval actually measure, and why one page load is a sample rather than a verdict. <a href="/articles/reading-timings/">Read the article</a></p>
+              </article>
+            </div>
           </div>
         </div>
       </section>
@@ -130,7 +155,7 @@
             <div class="faq">
               <details>
                 <summary>Why are some connection phases absent?</summary>
-                <p>A cached lookup or a reused connection can remove setup work from a navigation. Browsers can also restrict or round timing data. The readout omits phases reported as zero rather than inventing a duration for them.</p>
+                <p>A cached lookup or a reused connection can remove setup work from a navigation. Browsers can also restrict or round timing data. The readout omits phases reported as zero rather than inventing a duration for them. <a href="/articles/connection-reuse/">How reuse removes setup phases</a></p>
               </details>
               <details>
                 <summary>Why is the negotiated protocol sometimes unavailable?</summary>
@@ -142,7 +167,7 @@
               </details>
               <details>
                 <summary>The timings look different each time I load the page.</summary>
-                <p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable.</p>
+                <p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable. <a href="/articles/reading-timings/">How to read a single sample</a></p>
               </details>
               <details>
                 <summary>How do I report abuse?</summary>
@@ -170,6 +195,9 @@
             <li><a href="/">Overview</a></li>
             <li><a href="/#infrastructure">Infrastructure</a></li>
             <li><a href="/network/">Network</a></li>
+            <li><a href="/articles/name-resolution/">Name resolution</a></li>
+            <li><a href="/articles/connection-reuse/">Connection reuse</a></li>
+            <li><a href="/articles/reading-timings/">Reading timings</a></li>
           </ul>
         </div>
         <div class="foot-col">

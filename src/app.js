@@ -133,85 +133,6 @@ export function applyConnection(doc, nav, country) {
   return phases;
 }
 
-export function wireRequestComposer(doc) {
-  const dialog = doc.getElementById('request-dialog');
-  if (!dialog || typeof dialog.showModal !== 'function') return false;
-  const form = doc.getElementById('request-form');
-  const complete = doc.getElementById('request-complete');
-  const title = doc.getElementById('request-title');
-  const intro = doc.getElementById('request-intro');
-  const initialIntro = intro.textContent;
-  const summary = doc.getElementById('request-errors');
-  const counter = doc.getElementById('request-count');
-  const fields = [...form.querySelectorAll('input, select, textarea')];
-  const message = form.elements.namedItem('message');
-  const updateCount = () => { counter.textContent = `${message.value.length} / ${message.maxLength}`; };
-
-  const validate = (field) => {
-    field.setCustomValidity('');
-    const value = field.value.trim();
-    if (!value) field.setCustomValidity(field.tagName === 'SELECT' ? 'Choose a topic.' : 'This field is required.');
-    else if (field.minLength > 0 && value.length < field.minLength) field.setCustomValidity(`Use at least ${field.minLength} characters.`);
-    else if (field.maxLength > 0 && field.value.length > field.maxLength) field.setCustomValidity(`Use no more than ${field.maxLength} characters.`);
-    else if (field.validity.typeMismatch) field.setCustomValidity('Enter a valid email address.');
-    const error = doc.getElementById(`${field.id}-error`);
-    error.textContent = field.validationMessage;
-    error.hidden = field.validity.valid;
-    if (field.validity.valid) field.removeAttribute('aria-invalid');
-    else field.setAttribute('aria-invalid', 'true');
-    return field.validity.valid;
-  };
-  for (const field of fields) {
-    field.addEventListener('input', () => {
-      updateCount();
-      if (field.getAttribute('aria-invalid') === 'true') validate(field);
-      if (fields.every((item) => item.getAttribute('aria-invalid') !== 'true')) summary.hidden = true;
-    });
-  }
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const invalid = fields.filter((field) => !validate(field));
-    summary.hidden = invalid.length === 0;
-    if (invalid.length) {
-      invalid[0].focus();
-      return;
-    }
-    form.hidden = true;
-    complete.hidden = false;
-    title.textContent = 'Thank you.';
-    intro.textContent = 'We appreciate you getting in touch with Peakora Network.';
-    title.focus();
-  });
-  for (const button of dialog.querySelectorAll('[data-close-request]')) {
-    button.addEventListener('click', () => dialog.close());
-  }
-  dialog.addEventListener('close', () => {
-    form.reset();
-    for (const field of fields) {
-      field.setCustomValidity('');
-      field.removeAttribute('aria-invalid');
-      const error = doc.getElementById(`${field.id}-error`);
-      error.textContent = '';
-      error.hidden = true;
-    }
-    summary.hidden = true;
-    form.hidden = false;
-    complete.hidden = true;
-    title.textContent = 'Compose a request';
-    intro.textContent = initialIntro;
-    updateCount();
-  });
-  for (const button of doc.querySelectorAll('[data-open-request]')) {
-    button.hidden = false;
-    button.addEventListener('click', () => {
-      dialog.showModal();
-      fields[0].focus();
-    });
-  }
-  updateCount();
-  return true;
-}
-
 export function wireCopyButtons(doc, clipboard, schedule = setTimeout, cancel = clearTimeout) {
   if (!clipboard || typeof clipboard.writeText !== 'function') return 0;
   const buttons = doc.querySelectorAll('[data-copy]');
@@ -249,5 +170,4 @@ if (typeof document !== 'undefined' && typeof location !== 'undefined') {
 
   wireCopyButtons(document, typeof navigator !== 'undefined' ? navigator.clipboard : null);
   wireTabs(document);
-  wireRequestComposer(document);
 }

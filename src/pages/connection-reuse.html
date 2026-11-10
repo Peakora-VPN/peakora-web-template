@@ -1,0 +1,154 @@
+<!--
+title: Connection reuse — Peakora Network
+description: What a secure handshake establishes, why a fresh connection costs round trips, and how reusing connections changes what a browser can measure.
+out: articles/connection-reuse/index.html
+nav: network
+-->
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Articles / Connection reuse</p>
+          <div class="band-body">
+            <h1>Setup is a toll, not a destination.</h1>
+            <p class="lede">Every fresh connection pays for its own opening: a transport handshake, then a secure handshake on top. None of it moves a request a single byte. The cheapest setup is the one that is not repeated.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="handshake-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Secure transport</p>
+          <div class="band-body">
+            <h2 id="handshake-title">A handshake is a negotiation with stakes.</h2>
+            <p class="lede">Before data flows, the two ends of a connection have to agree on who is on the other side and how the conversation will be protected while it lasts.</p>
+            <div class="grid">
+              <article class="panel card">
+                <h3>Authentication</h3>
+                <p>The server presents a certificate that binds its name to a public key. The client checks that chain of trust before it relies on anything else about the connection.</p>
+              </article>
+              <article class="panel card">
+                <h3>Key agreement</h3>
+                <p>The two sides derive shared secrets without ever sending them across the network. From that point the channel has keys that only its ends hold.</p>
+              </article>
+              <article class="panel card">
+                <h3>Parameters</h3>
+                <p>The handshake also fixes the protocol version and the algorithms in force for this connection. Two connections to the same host can settle on different answers.</p>
+              </article>
+            </div>
+            <p>The security negotiated here protects everything the connection later carries. It applies to the channel, whatever requests and responses travel over it.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="fresh-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">A fresh connection</p>
+          <div class="band-body">
+            <h2 id="fresh-title">Round trips are the currency of setup.</h2>
+            <p class="lede">A handshake is measured in exchanges, and every exchange costs at least one trip across the network. Setup time is dominated by latency long before bandwidth matters.</p>
+            <ol class="path">
+              <li>
+                <p class="path-step mono">01 / Open the transport</p>
+                <h3>TCP settles its own opening exchange</h3>
+                <p>Before anything application-shaped moves, the client and the server trade three short messages to open the channel and synchronize their starting state.</p>
+              </li>
+              <li>
+                <p class="path-step mono">02 / Secure the channel</p>
+                <h3>The secure handshake rides on top</h3>
+                <p>Authentication and key agreement add exchanges of their own. Newer protocol revisions fold most of the work into fewer round trips than their predecessors, but on a fresh connection the work never reaches zero.</p>
+              </li>
+              <li>
+                <p class="path-step mono">03 / Speak</p>
+                <h3>The first request leaves only now</h3>
+                <p>Every setup exchange stands between the visitor and the first byte of the response. That is why connection opening is felt most on the very first load and least on a busy, returning one.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="reuse-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Connection reuse</p>
+          <div class="band-body">
+            <h2 id="reuse-title">The next request should not pay again.</h2>
+            <p class="lede">Once a connection exists, keeping it open and sending more work through it removes the entire setup phase from every later request.</p>
+            <div class="grid">
+              <article class="panel card">
+                <h3>Persistent connections</h3>
+                <p>Modern HTTP is built to leave a connection open after a response. The next request to the same host travels on the existing channel instead of opening a new one.</p>
+              </article>
+              <article class="panel card">
+                <h3>Session resumption</h3>
+                <p>When a new connection is unavoidable, a server can hand the client a ticket that lets a later session skip part of the handshake and reach protected data sooner.</p>
+              </article>
+              <article class="panel card">
+                <h3>One connection, many requests</h3>
+                <p>Multiplexed protocols carry many requests and responses over a single connection at the same time, so parallel page assets no longer mean parallel handshakes.</p>
+              </article>
+              <article class="panel card">
+                <h3>Newer transports</h3>
+                <p>The newest HTTP revision folds its secure layer into the transport itself. Setup still costs exchanges, but the timing boundaries a browser reports no longer split along the old lines.</p>
+              </article>
+            </div>
+            <p>Reuse is why repeated visits can feel instant even when the first one did not: the expensive part was already paid. For where setup sits in the wider request path, see the <a href="/network/">network guide</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="observe-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">What you can observe</p>
+          <div class="band-body">
+            <h2 id="observe-title">Reuse looks like missing phases.</h2>
+            <p class="lede">On a reused connection, the timing marks for connection setup collapse onto each other. The browser reports the request and the response, and nothing in between.</p>
+            <p>A readout with no transport or secure handshake is not hiding work; it is reporting that the work did not happen. This site draws the phases your browser reports and omits the ones it does not, so a warm visit can show nothing but the request itself and its answer.</p>
+            <p class="band-more"><a href="/#technical-notes">Open the browser measurement on the front page</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Questions</p>
+          <div class="band-body">
+            <div class="faq">
+              <details>
+                <summary>Why does the first load feel slower than the following ones?</summary>
+                <p>The first load pays for name resolution, transport setup and the secure handshake. Later loads can reuse each of those results, leaving only the request and its response.</p>
+              </details>
+              <details>
+                <summary>Is a reused connection less protected than a fresh one?</summary>
+                <p>No. Reuse continues the protection negotiated when the connection opened. Keeping a channel open does not weaken its encryption or its authentication.</p>
+              </details>
+              <details>
+                <summary>Why is there no secure-handshake phase in my timings?</summary>
+                <p>Either the connection was reused, so no new handshake ran, or the browser chose not to expose the mark. Here phases that cannot be measured are omitted rather than guessed.</p>
+              </details>
+              <details>
+                <summary>How do I report a transport problem?</summary>
+                <p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with the hostname, timestamps in UTC and what you observed. Repeated occurrences are more useful than a single snapshot.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="related-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Related reading</p>
+          <div class="band-body">
+            <h2 id="related-title">Continue along the request path.</h2>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>Name resolution</h3>
+                <p>How DNS turns a hostname into an address, where the answer gets cached, and why a lookup can be invisible in a page load. <a href="/articles/name-resolution/">Read the article</a></p>
+              </article>
+              <article class="panel card">
+                <h3>Reading timings: TTFB and transfer</h3>
+                <p>How a browser reports a page load, what the wait for the first byte includes, and why transfer time answers a different question. <a href="/articles/reading-timings/">Read the article</a></p>
+              </article>
+            </div>
+            <p class="band-more"><a href="/network/">Back to the network guide</a></p>
+          </div>
+        </div>
+      </section>

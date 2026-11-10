@@ -20,8 +20,8 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/assets/styles.af24aa98.css" />
-    <script type="module" src="/assets/app.62c90f0f.js"></script>
+    <link rel="stylesheet" href="/assets/styles.70671539.css" />
+    <script type="module" src="/assets/app.23af917d.js"></script>
   </head>
   <body>
     <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
@@ -224,13 +224,6 @@
           <div class="band-body">
             <h2>Let's talk about the network.</h2>
             <p class="lede">For network enquiries, operational issues and abuse reports, reach the team by email. Include the affected address, timestamps in UTC and what you observed when reporting an incident.</p>
-            <div class="contact-actions">
-              <button class="button request-open" type="button" data-open-request hidden>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
-                Prepare a request
-              </button>
-              <span class="contact-alternative">Or reach us directly</span>
-            </div>
             <p class="contact-line">
               <a class="contact-mail mono" href="mailto:abuse@peakora.network">abuse@peakora.network</a>
               <button class="copy mono" type="button" data-copy="abuse@peakora.network" aria-label="Copy contact email" aria-live="polite" hidden>Copy</button>
@@ -238,64 +231,6 @@
           </div>
         </div>
       </section>
-
-      <dialog class="request-dialog" id="request-dialog" aria-labelledby="request-title" aria-describedby="request-intro">
-        <div class="request-header">
-          <div>
-            <p class="request-eyebrow mono">Peakora Network / Contact</p>
-            <h2 id="request-title" tabindex="-1">Compose a request</h2>
-            <p id="request-intro">Choose a topic and give us a little context.</p>
-          </div>
-          <button class="request-close" type="button" data-close-request aria-label="Close request editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-        </div>
-        <form id="request-form" method="dialog" novalidate autocomplete="off">
-          <div class="request-form-body">
-            <p class="request-required">All fields are required.</p>
-            <p class="request-error-summary" id="request-errors" role="alert" hidden>Please check the highlighted fields.</p>
-            <div class="request-field">
-              <label for="request-topic">What can we help with?</label>
-              <select id="request-topic" name="topic" required aria-describedby="request-topic-error">
-                <option value="">Select a topic</option>
-                <option value="Network enquiry">Network enquiry</option>
-                <option value="Technical issue">Technical issue</option>
-                <option value="Abuse report">Abuse report</option>
-              </select>
-              <p class="request-field-error" id="request-topic-error" hidden></p>
-            </div>
-            <div class="request-row">
-              <div class="request-field">
-                <label for="request-name">Your name</label>
-                <input id="request-name" name="name" type="text" minlength="2" maxlength="80" required aria-describedby="request-name-error" placeholder="Alex Morgan" />
-                <p class="request-field-error" id="request-name-error" hidden></p>
-              </div>
-              <div class="request-field">
-                <label for="request-email">Email address</label>
-                <input id="request-email" name="email" type="email" maxlength="254" required aria-describedby="request-email-error" placeholder="you@example.com" spellcheck="false" />
-                <p class="request-field-error" id="request-email-error" hidden></p>
-              </div>
-            </div>
-            <div class="request-field">
-              <label for="request-subject">Subject</label>
-              <input id="request-subject" name="subject" type="text" minlength="6" maxlength="120" required aria-describedby="request-subject-error" placeholder="A short summary of your request" />
-              <p class="request-field-error" id="request-subject-error" hidden></p>
-            </div>
-            <div class="request-field">
-              <label for="request-message">Request details</label>
-              <textarea id="request-message" name="message" minlength="30" maxlength="2000" rows="6" required aria-describedby="request-message-hint request-count request-message-error" placeholder="Describe your question or what happened, and the outcome you expected."></textarea>
-              <div class="request-field-meta"><p id="request-message-hint">For incidents, include the affected service and timestamps in UTC.</p><span id="request-count" class="mono">0 / 2000</span></div>
-              <p class="request-field-error" id="request-message-error" hidden></p>
-            </div>
-          </div>
-          <div class="request-footer"><button class="request-secondary" type="button" data-close-request>Cancel</button><button class="button" type="submit">Send request</button></div>
-        </form>
-        <section class="request-complete" id="request-complete" aria-label="Request complete" hidden>
-          <div class="request-complete-body">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="m15 24 6 6 12-13"/></svg>
-            <p>Thanks for taking the time to share the details.</p>
-          </div>
-          <div class="request-footer"><button class="button" type="button" data-close-request>Close</button></div>
-        </section>
-      </dialog>
 
     </main>
 
@@ -314,6 +249,9 @@
             <li><a href="/">Overview</a></li>
             <li><a href="/#infrastructure">Infrastructure</a></li>
             <li><a href="/network/">Network</a></li>
+            <li><a href="/articles/name-resolution/">Name resolution</a></li>
+            <li><a href="/articles/connection-reuse/">Connection reuse</a></li>
+            <li><a href="/articles/reading-timings/">Reading timings</a></li>
           </ul>
         </div>
         <div class="foot-col">

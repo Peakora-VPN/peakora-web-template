@@ -539,73 +539,7 @@ h3 {
 .copy:hover { border-color: var(--accent-2); color: var(--text); }
 .copy[data-copied] { border-color: var(--accent-2); color: var(--text); }
 
-/* ── Составление обращения ───────────────────────────────────────────────── */
-
-.contact-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1.25rem; }
-.request-open { gap: 0.65rem; }
-.request-open svg { width: 20px; height: 20px; flex: none; }
-.contact-alternative { color: var(--text-dim); font-size: 0.8125rem; }
-.request-dialog {
-  width: min(44rem, calc(100% - 2rem));
-  max-height: calc(100vh - 2rem);
-  max-height: calc(100dvh - 2rem);
-  padding: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  background: var(--bg-2);
-  color: var(--text);
-  box-shadow: var(--shadow);
-}
-.request-dialog::backdrop { background: rgba(3, 6, 15, 0.8); backdrop-filter: blur(8px); }
-.request-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.75rem 2rem; border-bottom: 1px solid var(--hair); background: linear-gradient(135deg, rgba(106, 139, 255, 0.09), transparent); }
-.request-eyebrow { margin: 0 0 0.75rem; color: var(--accent-2); font-size: 0.625rem; letter-spacing: 0.1em; }
-.request-header h2 { margin-bottom: 0.6rem; font-size: clamp(1.5rem, 4vw, 2rem); }
-.request-header h2:focus { outline: none; }
-.request-header p:last-child { margin: 0; color: var(--text-dim); font-size: 0.875rem; }
-.request-close { display: grid; place-items: center; flex: none; width: 42px; height: 42px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: transparent; color: var(--text-dim); cursor: pointer; }
-.request-close svg { width: 22px; height: 22px; }
-.request-close:hover { color: var(--text); border-color: var(--accent-2); }
-.request-form-body { display: grid; gap: 1.25rem; padding: 1.5rem 2rem 2rem; }
-.request-required { margin: 0; color: var(--text-dim); font-size: 0.75rem; }
-.request-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.request-field { min-width: 0; }
-.request-field label { display: block; margin-bottom: 0.5rem; font-size: 0.8125rem; font-weight: 500; }
-.request-field input, .request-field select, .request-field textarea {
-  display: block;
-  width: 100%;
-  min-height: 46px;
-  padding: 0.75rem 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  background: var(--bg);
-  color: var(--text);
-  font: 400 0.875rem/1.5 var(--font-body);
-}
-.request-field select { padding-right: 1.75rem; cursor: pointer; }
-.request-field textarea { min-height: 9rem; max-height: 28rem; resize: vertical; }
-.request-field input::placeholder, .request-field textarea::placeholder { color: var(--text-dim); }
-.request-field [aria-invalid="true"] { border-color: #ffb0b7; }
-.request-field-error { margin: 0.5rem 0 0; color: #ffb0b7; font-size: 0.75rem; }
-.request-error-summary { margin: 0; padding: 0.8rem 1rem; border: 1px solid rgba(255, 176, 183, 0.35); border-radius: var(--r-sm); background: rgba(255, 176, 183, 0.06); color: #ffb0b7; font-size: 0.8125rem; }
-.request-field-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 0.6rem; color: var(--text-dim); }
-.request-field-meta p { margin: 0; max-width: 46ch; font-size: 0.6875rem; }
-.request-field-meta .mono { flex: none; font-size: 0.625rem; letter-spacing: 0.03em; }
-.request-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 2rem; border-top: 1px solid var(--hair); }
-.request-secondary { min-height: 44px; padding: 0.6rem 0.8rem; border: 1px solid transparent; border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font: 400 0.875rem var(--font-body); cursor: pointer; }
-.request-secondary:hover { border-color: var(--border); color: var(--text); }
-.request-complete-body { padding: 2.5rem 2rem; text-align: center; }
-.request-complete-body svg { width: 64px; height: 64px; color: var(--accent-2); }
-.request-complete-body p { margin: 1rem 0 0; color: var(--text-dim); font-size: 0.9375rem; }
-.request-complete .request-footer { justify-content: flex-end; }
-
 @media (max-width: 40rem) {
-  .request-header, .request-form-body { padding: 1.25rem; }
-  .request-row { grid-template-columns: 1fr; }
-  .request-footer { padding: 1rem 1.25rem; }
-  .request-field input, .request-field select, .request-field textarea { font-size: 1rem; }
-}
 
 @media (max-width: 30rem) {
   [id] { scroll-margin-top: 7.5rem; }

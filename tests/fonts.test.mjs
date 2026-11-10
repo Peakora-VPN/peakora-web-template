@@ -76,7 +76,15 @@ test('unicode-range покрывает все английские назван�
     }
   }
 
-  const pages = ['layout.html', 'pages/index.html', 'pages/network.html', 'pages/404.html'];
+  const pages = [
+    'layout.html',
+    'pages/index.html',
+    'pages/network.html',
+    'pages/404.html',
+    'pages/name-resolution.html',
+    'pages/connection-reuse.html',
+    'pages/reading-timings.html',
+  ];
   const text = pages
     .map((p) => readFileSync(SRC + p, 'utf8'))
     .join('')

@@ -1,0 +1,153 @@
+<!--
+title: Reading timings — Peakora Network
+description: How Navigation Timing reports a page load, what the wait for the first byte includes, and why transfer time answers a different question.
+out: articles/reading-timings/index.html
+nav: network
+-->
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Articles / Reading timings</p>
+          <div class="band-body">
+            <h1>One response, two clocks.</h1>
+            <p class="lede">A browser can say when a response started to arrive and when it finished. Everything interesting about delivery hides inside those two readings, and treating them as one number throws the interesting part away.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="timeline-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Navigation Timing</p>
+          <div class="band-body">
+            <h2 id="timeline-title">The browser keeps its own timeline.</h2>
+            <p class="lede">Every navigation is stamped with high-resolution marks: when the lookup ran, when the connection opened, when the request was sent, when the response began and when it ended.</p>
+            <p>The value of a single mark matters less than the distance between two marks. Each interval is a phase of the request path, and a phase appears only when the browser both measured it and chose to expose it. Reading the timeline means reading those intervals, never the marks alone.</p>
+            <div class="grid">
+              <article class="panel card">
+                <h3>Marks, not causes</h3>
+                <p>A timeline records when something happened, not why. It can show that the waiting interval grew; explaining the growth takes context the numbers alone do not carry.</p>
+              </article>
+              <article class="panel card">
+                <h3>Relative time</h3>
+                <p>The stamps count from the start of the navigation, not from the wall clock. They describe this load, on this connection, in this browser, and nothing beyond it.</p>
+              </article>
+              <article class="panel card">
+                <h3>Exposure limits</h3>
+                <p>Browsers can withhold or round marks for privacy and precision reasons. An absent stamp is a property of the measurement, not a failure of the page.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="clocks-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Waiting and transferring</p>
+          <div class="band-body">
+            <h2 id="clocks-title">TTFB and transfer measure different worlds.</h2>
+            <p class="lede">Time to first byte runs from the request going out to the response starting to arrive. Transfer runs from that first byte to the last. The first interval is a wait; the second is a delivery.</p>
+            <ol class="path">
+              <li>
+                <p class="path-step mono">01 / The request travels</p>
+                <h3>The outbound trip is part of the wait</h3>
+                <p>Time to first byte starts before the server has anything to answer with. The request's own journey across the network is inside the interval from the beginning.</p>
+              </li>
+              <li>
+                <p class="path-step mono">02 / The response is prepared</p>
+                <h3>Queueing and generation join the wait</h3>
+                <p>The same interval also holds everything that happens before the first byte can leave: waiting for a handler, preparing the response. A long wait is a sum of parts, and the timeline by itself does not say which part grew.</p>
+              </li>
+              <li>
+                <p class="path-step mono">03 / The response crosses back</p>
+                <h3>Transfer begins where the wait ends</h3>
+                <p>From the first byte to the last, the transfer interval describes the delivery of this document's bytes. It can be short while the wait was long, or the reverse; the two move independently and deserve separate readings.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="context-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Reading with context</p>
+          <div class="band-body">
+            <h2 id="context-title">A number becomes useful next to its neighbors.</h2>
+            <p class="lede">A duration means little alone. These comparisons keep single readings from being over-read.</p>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>The document is not the page</h3>
+                <p>The measured response is the main document. Styles, fonts and images are requested separately and are not inside its transfer time, so the number never describes a fully rendered page.</p>
+              </article>
+              <article class="panel card">
+                <h3>One load is a sample</h3>
+                <p>A single visit inherits whatever caching, connection reuse and path it happened to get. Only repeated readings separated in time begin to describe behavior rather than luck.</p>
+              </article>
+              <article class="panel card">
+                <h3>Waiting and transferring move apart</h3>
+                <p>A change in server preparation shifts the wait without touching transfer, and a congested path can do the opposite. Moving one number without the other is a clue about where to look.</p>
+              </article>
+              <article class="panel card">
+                <h3>The reading stays with you</h3>
+                <p>Navigation timing is computed in the browser from its own observations. This site reads it locally for display and sends nothing anywhere; there is nothing to correlate or retain.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="site-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">On this site</p>
+          <div class="band-body">
+            <h2 id="site-title">How the front page reads its own load.</h2>
+            <p class="lede">The measurement panel on the front page reads this navigation's timeline directly and draws the phases your browser reports, to scale, in milliseconds.</p>
+            <p>Phases reported as zero are left out rather than drawn empty, and segments too thin to label are widened so their names stay legible. The result describes exactly one page load: not an availability record, and not a bandwidth test. The <a href="/network/">network guide</a> explains the stages the scale is built from.</p>
+            <p class="band-more"><a href="/#technical-notes">Open the browser measurement section</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Questions</p>
+          <div class="band-body">
+            <div class="faq">
+              <details>
+                <summary>Why do the numbers change between reloads?</summary>
+                <p>Caching, connection reuse and the network path can all differ between visits. Each reading describes its own load, so variation between reloads is expected rather than suspicious.</p>
+              </details>
+              <details>
+                <summary>Is the transfer duration a measure of my bandwidth?</summary>
+                <p>No. It covers one document's response, which is a small and timing-sensitive workload. It says nothing about the sustained capacity of your connection.</p>
+              </details>
+              <details>
+                <summary>Why is a phase missing from the scale?</summary>
+                <p>Phases reported as zero, or not reported at all, are omitted rather than invented. A reused connection legitimately has no setup phases to show.</p>
+              </details>
+              <details>
+                <summary>How do I report what I measured?</summary>
+                <p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with the time in UTC, the hostname and the readings you saw. Screenshots are welcome; timestamps are what make them actionable.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="related-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Related reading</p>
+          <div class="band-body">
+            <h2 id="related-title">Continue along the request path.</h2>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>Name resolution</h3>
+                <p>How DNS turns a hostname into an address, where the answer gets cached, and why a lookup can be invisible in a page load. <a href="/articles/name-resolution/">Read the article</a></p>
+              </article>
+              <article class="panel card">
+                <h3>Secure transport and connection reuse</h3>
+                <p>What a secure handshake agrees on, why a fresh connection costs round trips, and how reuse skips the slow part. <a href="/articles/connection-reuse/">Read the article</a></p>
+              </article>
+            </div>
+            <p class="band-more"><a href="/network/">Back to the network guide</a></p>
+          </div>
+        </div>
+      </section>

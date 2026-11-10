@@ -85,28 +85,22 @@ test('контактный адрес нигде не вписан руками'
   }
 });
 
-test('форма обращения проверяет поля и не имеет сетевого действия', () => {
+test('контакт — только mailto и копирование, формы обращения нет', () => {
   const html = read('pages/index.html');
-  assert.match(html, /<dialog[^>]*id="request-dialog"/);
-  assert.match(html, /<form[^>]*id="request-form"[^>]*method="dialog"[^>]*novalidate/);
-  assert.doesNotMatch(html, /<form[^>]*\saction=/);
-  assert.match(html, /data-open-request[^>]*hidden/);
-  for (const [id, min, max] of [['request-name', 2, 80], ['request-subject', 6, 120], ['request-message', 30, 2000]]) {
-    const tag = html.match(new RegExp(`<(?:input|textarea)[^>]*id="${id}"[^>]*>`))?.[0] ?? '';
-    assert.match(tag, /\brequired\b/, id);
-    assert.match(tag, new RegExp(`minlength="${min}"`), id);
-    assert.match(tag, new RegExp(`maxlength="${max}"`), id);
-    assert.match(tag, new RegExp(`aria-describedby="[^"]*${id}-error`), id);
-  }
-  assert.match(html, /<input[^>]*id="request-email"[^>]*type="email"[^>]*maxlength="254"[^>]*required/);
-  assert.match(html, /<select[^>]*id="request-topic"[^>]*required/);
+  assert.doesNotMatch(html, /<dialog/);
+  assert.doesNotMatch(html, /<form/);
+  assert.doesNotMatch(html, /id="request-/);
+  assert.doesNotMatch(html, /data-(?:open|close)-request/);
+  assert.match(html, /<a class="contact-mail mono" href="mailto:\{\{CONTACT\}\}">\{\{CONTACT\}\}<\/a>/);
+  assert.match(html, /<button class="copy mono"[^>]*data-copy="\{\{CONTACT\}\}"/);
 });
 
-test('форма завершается после Send request без промежуточного просмотра', () => {
+test('контакт доступен без JS: ссылка видна, копирование — улучшение', () => {
   const html = read('pages/index.html');
-  assert.ok(/<button[^>]*type="submit">Send request<\/button>/.test(html), 'нет Send request');
-  assert.ok(/id="request-complete"[^>]*hidden/.test(html), 'нет завершающего экрана');
-  assert.doesNotMatch(html, /Review request|Review your request|id="request-edit"|id="request-preview"/);
+  const link = html.match(/<a class="contact-mail mono"[^>]*>/)?.[0] ?? '';
+  assert.ok(!/\shidden/.test(link), 'mailto-ссылка не должна быть скрыта');
+  const copy = html.match(/<button class="copy mono"[^>]*>/)?.[0] ?? '';
+  assert.match(copy, /\shidden/, 'копирование без JS должно быть скрыто');
 });
 
 test('404 не перебивает свой заголовок', () => {

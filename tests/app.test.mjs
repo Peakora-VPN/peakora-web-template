@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import * as app from '../src/app.js';
-const { applyConnection, applyNode, wireCopyButtons, wireTabs, wireRequestComposer } = app;
+const { applyConnection, applyNode, wireCopyButtons, wireTabs } = app;
 
 // Минимальный поддельный DOM: jsdom тянуть некуда, зависимостей в проекте нет.
 function el(tag = 'div') {
@@ -272,7 +272,7 @@ test('неполная разметка вкладок не прерывает �
   assert.equal(valid.list.hidden, false);
 });
 
-test('страницы без диалога и браузеры без showModal сохраняют контакт по почте', () => {
-  assert.equal(wireRequestComposer(fakeDoc()), false);
-  assert.equal(wireRequestComposer(fakeDoc(['request-dialog'])), false);
+test('композер обращений удалён: контакт остаётся почтовой ссылкой', () => {
+  assert.equal(app.wireRequestComposer, undefined);
+  assert.equal(typeof app.wireCopyButtons, 'function');
 });

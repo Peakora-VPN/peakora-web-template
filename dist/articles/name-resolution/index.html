@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Name resolution — Peakora Network</title>
+    <meta name="description" content="How DNS turns a hostname into an address, where the answer gets cached, and why a lookup can be invisible in a page load." />
+    <meta name="application-name" content="Peakora Network" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#070b16" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Peakora Network" />
+    <meta property="og:title" content="Name resolution — Peakora Network" />
+    <meta property="og:description" content="How DNS turns a hostname into an address, where the answer gets cached, and why a lookup can be invisible in a page load." />
+    <meta property="og:locale" content="en_US" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/styles.70671539.css" />
+    <script type="module" src="/assets/app.23af917d.js"></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"><span class="b1"></span><span class="b2"></span></div>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-head">
+      <div class="wrap head-inner">
+        <a class="brand" href="/">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
+          <span class="brand-name">Peakora <b>Network</b></span>
+        </a>
+        <nav class="site-nav mono" aria-label="Primary">
+          <a href="/" data-nav="overview">Overview</a>
+          <a href="/network/" data-nav="network" aria-current="page">Network</a>
+          <a href="/#contact" data-nav="contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+
+      <section class="band band-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Articles / Name resolution</p>
+          <div class="band-body">
+            <h1>A name is a question.</h1>
+            <p class="lede">A hostname is easy for people to remember and useless for a machine to dial. Before any connection can start, the name has to be translated into an address, and every step of that translation is designed to happen as rarely as possible.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="walk-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">The lookup path</p>
+          <div class="band-body">
+            <h2 id="walk-title">From typed name to usable address.</h2>
+            <p class="lede">Resolution is a chain of questions. Each link answers a little more of the original query until one of them can answer it completely.</p>
+            <ol class="path">
+              <li>
+                <p class="path-step mono">01 / Ask locally</p>
+                <h3>The browser and the operating system check first</h3>
+                <p>A browser keeps recent answers in its own cache, and the operating system keeps a separate one that every application shares. If either layer holds a fresh answer, resolution is over before the network is involved at all.</p>
+              </li>
+              <li>
+                <p class="path-step mono">02 / Ask the configured resolver</p>
+                <h3>An unanswered name goes to a recursive resolver</h3>
+                <p>The system forwards the query to the resolver provided by the network. From this point the client simply waits while the resolver does the walking on its behalf.</p>
+              </li>
+              <li>
+                <p class="path-step mono">03 / Walk the hierarchy</p>
+                <h3>Root, top-level zone, authoritative server</h3>
+                <p>The resolver asks a root server where the top-level zone is handled, asks that registry where the domain's authoritative servers live, and asks one of those servers for the record. Each hop is its own exchange, and a cold answer can take several round trips to collect.</p>
+              </li>
+              <li>
+                <p class="path-step mono">04 / Cache the answer</p>
+                <h3>The record comes back with a lifetime attached</h3>
+                <p>The answer arrives carrying a time to live set by the zone's operator. Every cache along the way may keep the record for that long and answer from memory instead of asking again.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="cache-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Caching</p>
+          <div class="band-body">
+            <h2 id="cache-title">The whole system is built to skip work.</h2>
+            <p class="lede">DNS is cached at every layer, because repeating a full lookup for every connection would add delay without adding any new information.</p>
+            <div class="grid">
+              <article class="panel card">
+                <h3>Browser cache</h3>
+                <p>The browser keeps its own list of recent answers and checks it before bothering the rest of the system. It is the closest cache and usually the first to be hit.</p>
+              </article>
+              <article class="panel card">
+                <h3>Operating system cache</h3>
+                <p>Every application on the device shares this layer. One program's lookup can spare the next program the entire question, whatever the program is.</p>
+              </article>
+              <article class="panel card">
+                <h3>Resolver cache</h3>
+                <p>A resolver serves many clients at once, so its cache is shared the widest. A frequently requested name is usually answered from memory long before the hierarchy needs to be asked.</p>
+              </article>
+              <article class="panel card">
+                <h3>Time to live</h3>
+                <p>Each record carries its own expiration, chosen by the zone's operator. A short lifetime spreads corrections quickly; a long one trades slower corrections for fewer lookups.</p>
+              </article>
+            </div>
+            <p>Caches can also hold a negative answer. When a name does not resolve, many resolvers remember the failure briefly, so one mistyped name does not trigger a fresh walk on every try.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="observe-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">What you can observe</p>
+          <div class="band-body">
+            <h2 id="observe-title">The lookup is visible only when it happens.</h2>
+            <p class="lede">Navigation Timing reports the DNS phase as the interval between the start and the end of the lookup. A warm cache makes those two marks coincide, and the phase disappears instead of appearing as a measurable step.</p>
+            <p>That absence is the cache working, not a gap in the page. Here the readout draws only the phases your browser reports, so a repeat visit can legitimately show no resolution at all. The <a href="/network/">network guide</a> places this stage among the rest of the request path.</p>
+            <p class="band-more"><a href="/#technical-notes">Open the browser measurement on the front page</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap band-grid">
+          <p class="rail-label">Questions</p>
+          <div class="band-body">
+            <div class="faq">
+              <details>
+                <summary>Why did the DNS phase vanish on my second visit?</summary>
+                <p>The answer was already cached by your browser, your operating system or the resolver. Cached lookups skip the network entirely, so there is no interval left to measure.</p>
+              </details>
+              <details>
+                <summary>Does a cached answer mean the address never changes?</summary>
+                <p>No. It means the answer is still inside its declared lifetime. Once that lifetime expires, the next lookup asks the hierarchy again and changes spread as caches refresh.</p>
+              </details>
+              <details>
+                <summary>Who decides how long an answer is kept?</summary>
+                <p>The operator of the authoritative zone sets the record's time to live, and well-behaved caches honor it. A cache may shorten the lifetime, but extending it would serve stale answers.</p>
+              </details>
+              <details>
+                <summary>How do I report a resolution problem?</summary>
+                <p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with the hostname, the approximate time in UTC and what you observed. That context is enough for a useful first check.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="related-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">Related reading</p>
+          <div class="band-body">
+            <h2 id="related-title">Continue along the request path.</h2>
+            <div class="grid grid-2">
+              <article class="panel card">
+                <h3>Secure transport and connection reuse</h3>
+                <p>What a secure handshake agrees on, why a fresh connection costs round trips, and how reuse skips the slow part. <a href="/articles/connection-reuse/">Read the article</a></p>
+              </article>
+              <article class="panel card">
+                <h3>Reading timings: TTFB and transfer</h3>
+                <p>How a browser reports a page load, what the wait for the first byte includes, and why transfer time answers a different question. <a href="/articles/reading-timings/">Read the article</a></p>
+              </article>
+            </div>
+            <p class="band-more"><a href="/network/">Back to the network guide</a></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap foot-grid">
+        <div class="foot-brand">
+          <a class="brand" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
+            <span class="brand-name">Peakora <b>Network</b></span>
+          </a>
+          <p>Distributed edge infrastructure. A considered approach to connections, delivery and network operations.</p>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Site</p>
+          <ul>
+            <li><a href="/">Overview</a></li>
+            <li><a href="/#infrastructure">Infrastructure</a></li>
+            <li><a href="/network/">Network</a></li>
+            <li><a href="/articles/name-resolution/">Name resolution</a></li>
+            <li><a href="/articles/connection-reuse/">Connection reuse</a></li>
+            <li><a href="/articles/reading-timings/">Reading timings</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="rail-label">Contact</p>
+          <ul>
+            <li><a href="mailto:abuse@peakora.network">abuse@peakora.network</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap foot-rule mono">
+        <p>© <span id="year">2026</span> Peakora Network</p>
+        <p id="foot-node">Edge node</p>
+      </div>
+    </footer>
+  </body>
+</html>
