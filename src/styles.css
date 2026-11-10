@@ -539,8 +539,6 @@ h3 {
 .copy:hover { border-color: var(--accent-2); color: var(--text); }
 .copy[data-copied] { border-color: var(--accent-2); color: var(--text); }
 
-@media (max-width: 40rem) {
-
 @media (max-width: 30rem) {
   [id] { scroll-margin-top: 7.5rem; }
   .wrap { width: calc(100% - 2rem); }

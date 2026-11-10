@@ -133,3 +133,9 @@ test('стили определяют тёмную палитру и гасят 
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /--font-mono:\s*"JetBrains Mono"/);
 });
+
+test('CSS-блоки сбалансированы, подвал не оказывается внутри медиазапроса', () => {
+  const css = read('styles.css');
+  assert.equal((css.match(/\{/g) ?? []).length, (css.match(/\}/g) ?? []).length);
+  assert.match(css, /@media \(max-width: 30rem\) \{[\s\S]*?\n\}\n\n\/\* ── 404/);
+});
