@@ -13,6 +13,7 @@ const NAMESPACES = ['http://www.w3.org/2000/svg', 'http://www.w3.org/1999/xlink'
 const PAGES = [
   'index.html',
   'network/index.html',
+  'articles/index.html',
   '404.html',
   'articles/name-resolution/index.html',
   'articles/connection-reuse/index.html',
@@ -49,12 +50,21 @@ test('собираются все страницы, включая вложен�
 test('каркас разворачивается: ни одного плейсхолдера не осталось', () => {
   for (const name of PAGES) {
     const html = page(name);
-    for (const token of ['{{TITLE}}', '{{DESCRIPTION}}', '{{CONTENT}}', '{{YEAR}}', '<!--LOGO-->']) {
+    for (const token of ['{{TITLE}}', '{{DESCRIPTION}}', '{{OG_TYPE}}', '{{CONTENT}}', '{{YEAR}}', '<!--LOGO-->']) {
       assert.ok(!html.includes(token), `${name}: остался ${token}`);
     }
     assert.ok(!html.includes('<!--'), `${name}: HTML-комментарии не удалены`);
     assert.match(html, /<path fill="currentColor"/, `${name}: логотип не заинлайнен`);
     assert.match(html, /<title>.+<\/title>/, `${name}: пустой заголовок`);
+  }
+});
+
+test('собранные страницы получают правильный og:type', () => {
+  for (const name of ['index.html', 'network/index.html', '404.html']) {
+    assert.match(page(name), /<meta property="og:type" content="website"/);
+  }
+  for (const name of ['articles/name-resolution/index.html', 'articles/connection-reuse/index.html', 'articles/reading-timings/index.html']) {
+    assert.match(page(name), /<meta property="og:type" content="article"/);
   }
 });
 
@@ -68,7 +78,20 @@ test('у страниц свои заголовки, а активный пун�
 
   assert.match(page('index.html'), /data-nav="overview" aria-current="page"/);
   assert.match(page('network/index.html'), /data-nav="network" aria-current="page"/);
+  for (const name of ['articles/name-resolution/index.html', 'articles/connection-reuse/index.html', 'articles/reading-timings/index.html']) {
+    assert.match(page(name), /data-nav="notes" aria-current="page"/, name);
+  }
   assert.doesNotMatch(page('404.html'), /aria-current/, '404 не является пунктом меню');
+});
+
+test('каталог Field notes связывает все статьи и отмечает активный раздел', () => {
+  const catalog = page('articles/index.html');
+  assert.match(catalog, /<title>Field notes — Peakora Network<\/title>/);
+  assert.match(catalog, /data-nav="notes" aria-current="page"/);
+  for (const path of ['/articles/name-resolution/', '/articles/connection-reuse/', '/articles/reading-timings/']) {
+    assert.ok(catalog.includes(`href="${path}"`), `каталог не ссылается на ${path}`);
+  }
+  assert.ok(catalog.includes('href="/network/"'));
 });
 
 test('контактный адрес подставлен из site.json', () => {
@@ -79,7 +102,7 @@ test('контактный адрес подставлен из site.json', () =
   assert.ok(page('index.html').includes(`mailto:${site.contact}`), 'нет ссылки на почту');
   assert.ok(page('index.html').includes(`data-copy="${site.contact}"`), 'кнопке копирования нечего копировать');
   assert.ok(page('network/index.html').includes(site.contact), 'на /network/ нет адреса');
-  for (const name of PAGES.filter((p) => p.startsWith('articles/'))) {
+  for (const name of PAGES.filter((p) => p.startsWith('articles/') && p !== 'articles/index.html')) {
     assert.ok(page(name).includes(`mailto:${site.contact}`), `${name}: нет рабочей ссылки на почту`);
   }
 });

@@ -1,0 +1,51 @@
+<!--
+title: Field notes — Peakora Network
+description: Practical notes on name resolution, connection setup, reuse and the timings that describe a web response.
+out: articles/index.html
+nav: notes
+-->
+      <section class="band band-hero editorial-hero">
+        <div class="wrap band-grid">
+          <p class="rail-label">Peakora Network / Field notes</p>
+          <div class="band-body">
+            <p class="hero-kicker mono">Notes from the request path</p>
+            <h1>Read the network<br />one layer at a time.</h1>
+            <p class="lede">A short reading series about the systems behind a page load: how a name becomes an address, why a second connection can skip setup and what response timings actually describe.</p>
+            <p class="band-more"><a href="/network/">Open the complete network guide</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="notes-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">01 / Reading series</p>
+          <div class="band-body">
+            <h2 id="notes-title">Three notes. One continuous path.</h2>
+            <p class="lede">Read in order for the complete journey, or open the question that brought you here.</p>
+            <ol class="note-list">
+              <li>
+                <p class="note-number mono">01 / Names</p>
+                <div><h3><a href="/articles/name-resolution/">Name resolution, from hostname to address</a></h3><p>Follow a lookup through browser, operating system and resolver caches. Understand why a cached answer leaves no DNS interval to measure.</p><a class="text-link" href="/articles/name-resolution/">Read name resolution</a></div>
+              </li>
+              <li>
+                <p class="note-number mono">02 / Connections</p>
+                <div><h3><a href="/articles/connection-reuse/">Connection reuse and the quiet second visit</a></h3><p>See what a fresh transport and secure handshake must establish, and why reuse removes setup rather than hiding it.</p><a class="text-link" href="/articles/connection-reuse/">Read connection reuse</a></div>
+              </li>
+              <li>
+                <p class="note-number mono">03 / Measurements</p>
+                <div><h3><a href="/articles/reading-timings/">Reading timings without overreading them</a></h3><p>Separate waiting for the first byte from transferring the response, and give one browser measurement the context it needs.</p><a class="text-link" href="/articles/reading-timings/">Read reading timings</a></div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="notes-context-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">02 / Wider context</p>
+          <div class="band-body editorial-split">
+            <div><h2 id="notes-context-title">A note answers one question. The guide connects them.</h2></div>
+            <div><p>The Network guide places these details alongside transport negotiation, HTTP delivery and operational context. It is the reference map; Field notes are the close readings.</p><p class="band-more"><a href="/network/">Explore the Network guide</a></p></div>
+          </div>
+        </div>
+      </section>

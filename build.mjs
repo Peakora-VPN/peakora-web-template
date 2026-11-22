@@ -98,6 +98,8 @@ for (const file of readdirSync(PAGES).filter((f) => extname(f) === '.html')) {
     .join(meta.title)
     .split('{{DESCRIPTION}}')
     .join(meta.description)
+    .split('{{OG_TYPE}}')
+    .join(meta.type ?? 'website')
     .split('{{CONTENT}}')
     .join(content);
 

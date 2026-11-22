@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Network — Peakora Network</title>
-    <meta name="description" content="A practical guide to name resolution, transport, connection reuse and response delivery." />
+    <meta name="description" content="A practical reference to DNS, connections, secure transport, HTTP delivery and the browser timings that describe a page load." />
     <meta name="application-name" content="Peakora Network" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="color-scheme" content="dark" />
@@ -14,13 +14,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Peakora Network" />
     <meta property="og:title" content="Network — Peakora Network" />
-    <meta property="og:description" content="A practical guide to name resolution, transport, connection reuse and response delivery." />
+    <meta property="og:description" content="A practical reference to DNS, connections, secure transport, HTTP delivery and the browser timings that describe a page load." />
     <meta property="og:locale" content="en_US" />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/assets/styles.371f5ad2.css" />
+    <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/assets/styles.284e7c83.css" />
     <script type="module" src="/assets/app.23af917d.js"></script>
   </head>
   <body>
@@ -36,6 +36,7 @@
         <nav class="site-nav mono" aria-label="Primary">
           <a href="/" data-nav="overview">Overview</a>
           <a href="/network/" data-nav="network" aria-current="page">Network</a>
+          <a href="/articles/" data-nav="notes">Field notes</a>
           <a href="/#contact" data-nav="contact">Contact</a>
         </nav>
       </div>
@@ -43,136 +44,137 @@
 
     <main id="main">
 
-      <section class="band band-hero">
+      <section class="band band-hero guide-hero">
         <div class="wrap band-grid">
-          <p class="rail-label">Peakora Network / Network</p>
+          <p class="rail-label">Peakora Network / Network guide</p>
           <div class="band-body">
+            <p class="hero-kicker mono">Reference / The request path</p>
             <h1>Inside the request path.</h1>
-            <p class="lede">A connection is a sequence of decisions and exchanges. Understanding its stages makes measurements more useful and network behavior easier to explain.</p>
+            <p class="lede">A practical reference to names, connections, secure transport, HTTP and response delivery — with the boundaries of what one browser measurement can tell you.</p>
           </div>
         </div>
       </section>
 
-      <section class="band">
+      <section class="band guide-intro" aria-label="Guide navigation">
         <div class="wrap band-grid">
-          <p class="rail-label">Request path</p>
+          <p class="rail-label">Contents</p>
           <div class="band-body">
-            <ol class="path">
-              <li>
-                <p class="path-step mono">01 / Resolve</p>
-                <h3>A hostname becomes an address</h3>
-                <p>Your browser resolves this host's name before it can connect. If the answer is already cached, there may be no DNS phase to show. <a href="/articles/name-resolution/">How name resolution works</a></p>
-              </li>
-              <li>
-                <p class="path-step mono">02 / Connect</p>
-                <h3>The browser establishes a connection</h3>
-                <p>Connection and secure handshake timings appear when the browser reports them. A reused connection skips this work; newer transports may expose different timing boundaries. <a href="/articles/connection-reuse/">How connection reuse skips the setup</a></p>
-              </li>
-              <li>
-                <p class="path-step mono">03 / Request</p>
-                <h3>The browser waits for the first byte</h3>
-                <p>The TTFB phase measures the interval from sending the request to receiving the start of the response. It includes network travel and the time taken to prepare the response.</p>
-              </li>
-              <li>
-                <p class="path-step mono">04 / Delivery</p>
-                <h3>The response reaches your browser</h3>
-                <p>The transfer phase ends when the page response has arrived. It does not include every image, font or stylesheet, and it is not a bandwidth test.</p>
-              </li>
-            </ol>
+            <nav class="guide-contents" aria-label="Network guide contents">
+              <a href="#resolve"><span>01</span>Resolve a name</a>
+              <a href="#connect"><span>02</span>Open a connection</a>
+              <a href="#secure"><span>03</span>Secure the channel</a>
+              <a href="#request"><span>04</span>Send the request</a>
+              <a href="#deliver"><span>05</span>Deliver the response</a>
+              <a href="#signals"><span>06</span>Read the signals</a>
+            </nav>
           </div>
         </div>
       </section>
 
-      <section class="band">
+      <section class="band guide-chapter" id="resolve" aria-labelledby="resolve-title">
         <div class="wrap band-grid">
-          <p class="rail-label">Protocol foundations</p>
+          <p class="rail-label">01 / Resolve</p>
           <div class="band-body">
-            <h2>Separate responsibilities, shared purpose.</h2>
-            <p class="lede">Different protocols solve different parts of delivery. Keeping those responsibilities distinct helps explain what a browser can observe.</p>
+            <h2 id="resolve-title">A hostname becomes an address.</h2>
+            <p class="lede">DNS connects a memorable name to a usable address. Browser, operating system and resolver caches can answer before a new network lookup is needed.</p>
+            <div class="editorial-split">
+              <div><h3>The lookup is conditional</h3><p>A browser checks available caches before asking the configured resolver. A complete hierarchy walk is necessary only when no usable cached answer remains.</p></div>
+              <div><h3>The measurement follows the work</h3><p>A missing DNS phase can therefore mean a useful cached answer, not missing information about the page. Navigation Timing reports an interval only when the work occurred and the browser exposed it.</p></div>
+            </div>
+            <p class="band-more"><a href="/articles/name-resolution/">Read the name resolution note</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band guide-chapter" id="connect" aria-labelledby="connect-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">02 / Connect</p>
+          <div class="band-body">
+            <h2 id="connect-title">The endpoints establish a transport.</h2>
+            <p class="lede">A fresh connection must open before application data can move. A reused connection continues an existing channel and skips that setup.</p>
+            <dl class="area-points chapter-points">
+              <div><dt>Fresh setup</dt><dd>Opening a transport requires exchanges between client and server. Latency affects each exchange before a request can be sent.</dd></div>
+              <div><dt>Reuse</dt><dd>Persistent and multiplexed connections let later requests use an existing channel rather than repeat the opening work.</dd></div>
+              <div><dt>Observable boundaries</dt><dd>Navigation Timing can expose connection marks, but the visible phases depend on the transport and on whether setup actually happened.</dd></div>
+            </dl>
+            <p class="band-more"><a href="/articles/connection-reuse/">Read the connection reuse note</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band guide-chapter" id="secure" aria-labelledby="secure-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">03 / Secure</p>
+          <div class="band-body">
+            <h2 id="secure-title">The channel negotiates protection.</h2>
+            <p class="lede">For a secure connection, the endpoints authenticate and agree on encryption parameters before relying on the channel.</p>
             <div class="grid">
-              <article class="panel card">
-                <h3>Name resolution</h3>
-                <p>DNS connects names to addresses. Its answer may be cached by the browser, the operating system or a resolver, so a lookup is not always visible in one page load. <a href="/articles/name-resolution/">Read the article</a></p>
-              </article>
-              <article class="panel card">
-                <h3>Secure transport</h3>
-                <p>A secure handshake establishes how a connection will protect data in transit. The transport and protocol in use affect which timing boundaries the browser reports.</p>
-              </article>
-              <article class="panel card">
-                <h3>HTTP delivery</h3>
-                <p>HTTP describes the exchange of requests and responses. The negotiated version belongs to this connection; it is not a statement about every client or network path. <a href="/articles/reading-timings/">Read the article</a></p>
-              </article>
+              <article class="panel card"><h3>Authentication</h3><p>The server presents a certificate binding its name to a public key. The client checks that chain of trust before using the channel.</p></article>
+              <article class="panel card"><h3>Key agreement</h3><p>The endpoints derive shared secrets for protecting data in transit without sending those secrets across the network.</p></article>
+              <article class="panel card"><h3>Separate responsibilities</h3><p>The secure handshake belongs to the connection. HTTP describes the requests and responses carried inside it; the two layers should not be conflated.</p></article>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="band" aria-labelledby="reading-title">
+      <section class="band guide-chapter" id="request" aria-labelledby="request-title">
         <div class="wrap band-grid">
-          <p class="rail-label">Reading the signals</p>
+          <p class="rail-label">04 / Request</p>
+          <div class="band-body">
+            <h2 id="request-title">Waiting for the first byte has more than one cause.</h2>
+            <p class="lede">Time to first byte begins with the request and ends when the response starts arriving. Network travel and response preparation both belong to this interval.</p>
+            <ol class="path">
+              <li><p class="path-step mono">01 / Outbound</p><h3>The request crosses the path</h3><p>The request must reach the server before a response can be prepared. Its journey is already part of the waiting interval.</p></li>
+              <li><p class="path-step mono">02 / Prepare</p><h3>The response is assembled</h3><p>Queueing and response generation also occur before the first byte can leave. The timing alone does not divide these causes.</p></li>
+              <li><p class="path-step mono">03 / First byte</p><h3>The wait ends when arrival begins</h3><p>TTFB identifies how long the wait was; by itself it cannot identify which component made the wait long.</p></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="band guide-chapter" id="deliver" aria-labelledby="deliver-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">05 / Deliver</p>
+          <div class="band-body">
+            <h2 id="deliver-title">The response arrives. The page may still be assembling.</h2>
+            <p class="lede">Transfer time runs from the first response byte to the last for this document. Styles, fonts and other resources are separate exchanges.</p>
+            <div class="editorial-split">
+              <div><h3>One document</h3><p>The transfer interval describes this response's bytes. It does not include every resource needed to render the complete page.</p></div>
+              <div><h3>Not a capacity test</h3><p>A small document is a different workload from a sustained transfer. Its duration is not a measure of available bandwidth.</p></div>
+            </div>
+            <p class="band-more"><a href="/articles/reading-timings/">Read the timing note</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" id="signals" aria-labelledby="reading-title">
+        <div class="wrap band-grid">
+          <p class="rail-label">06 / Reading the signals</p>
           <div class="band-body">
             <h2 id="reading-title">A measurement needs its context.</h2>
+            <p class="lede">A useful reading starts with what the browser actually observed and stops short of claims the observation cannot support.</p>
             <div class="grid grid-2">
               <article class="panel card"><h3>Fresh and reused connections</h3><p>A fresh connection may include resolution and a handshake. A reused one can move directly to the request. Missing setup phases can therefore reflect useful reuse rather than missing work.</p></article>
               <article class="panel card"><h3>One response and a complete page</h3><p>The main document is only one resource. Styles, fonts and images can arrive separately. A document transfer duration does not describe the time needed to render every part of a page.</p></article>
               <article class="panel card"><h3>Waiting and transferring</h3><p>Time to first byte includes the request's travel and response preparation. Transfer time begins when the response starts arriving. A change in one can happen without a similar change in the other.</p></article>
               <article class="panel card"><h3>A sample and a pattern</h3><p>One observation is a starting point. Repeated behavior, timestamps and the scope of affected clients are needed to understand a broader issue. A fast sample is not an uptime record.</p></article>
             </div>
-            <p class="band-more"><a href="/#technical-notes">Open the browser measurement section</a></p>
-            <p class="band-more"><a href="/articles/reading-timings/">Learn how to read the timings</a></p>
+            <p class="band-more"><a href="/#technical-notes">Inspect this page load</a> · <a href="/articles/">Browse all field notes</a></p>
           </div>
         </div>
       </section>
 
-      <section class="band" aria-labelledby="further-title">
-        <div class="wrap band-grid">
-          <p class="rail-label">Further reading</p>
-          <div class="band-body">
-            <h2 id="further-title">Three articles behind the guide.</h2>
-            <p class="lede">Each takes one stage of the request path and looks at it closely.</p>
-            <div class="grid">
-              <article class="panel card">
-                <h3>Name resolution, from hostname to address</h3>
-                <p>How a lookup travels from the browser's cache to the authoritative server, and why a cached answer means no DNS phase to show. <a href="/articles/name-resolution/">Read the article</a></p>
-              </article>
-              <article class="panel card">
-                <h3>Connection reuse and the quiet second visit</h3>
-                <p>What a reused connection skips, why zero phases are omitted rather than drawn empty, and what still happens on every request. <a href="/articles/connection-reuse/">Read the article</a></p>
-              </article>
-              <article class="panel card">
-                <h3>Reading timings without overreading them</h3>
-                <p>What the wait for the first byte and the transfer interval actually measure, and why one page load is a sample rather than a verdict. <a href="/articles/reading-timings/">Read the article</a></p>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="band">
+      <section class="band" aria-labelledby="network-questions-title">
         <div class="wrap band-grid">
           <p class="rail-label">Questions</p>
           <div class="band-body">
+            <h2 id="network-questions-title">When the reading needs an explanation.</h2>
             <div class="faq">
-              <details>
-                <summary>Why are some connection phases absent?</summary>
-                <p>A cached lookup or a reused connection can remove setup work from a navigation. Browsers can also restrict or round timing data. The readout omits phases reported as zero rather than inventing a duration for them. <a href="/articles/connection-reuse/">How reuse removes setup phases</a></p>
-              </details>
-              <details>
-                <summary>Why is the negotiated protocol sometimes unavailable?</summary>
-                <p>A browser does not always expose the protocol identifier for a navigation. When the value is absent, the page leaves it unspecified rather than inferring it from the address or a connection duration.</p>
-              </details>
-              <details>
-                <summary>Is the transfer duration a speed test?</summary>
-                <p>No. A small page response is a different workload from a sustained transfer, and it can be affected by caching and timing precision. The reading describes this response, not the capacity of your connection.</p>
-              </details>
-              <details>
-                <summary>The timings look different each time I load the page.</summary>
-                <p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable. <a href="/articles/reading-timings/">How to read a single sample</a></p>
-              </details>
-              <details>
-                <summary>How do I report abuse?</summary>
-                <p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with timestamps in UTC and the hostname or address you observed. These details help us investigate.</p>
-              </details>
+              <details><summary>Why are some connection phases absent?</summary><p>A cached lookup or a reused connection can remove setup work from a navigation. Browsers can also restrict or round timing data. The readout omits phases reported as zero rather than inventing a duration for them. <a href="/articles/connection-reuse/">How reuse removes setup phases</a></p></details>
+              <details><summary>Why is the negotiated protocol sometimes unavailable?</summary><p>A browser does not always expose the protocol identifier for a navigation. When the value is absent, the page leaves it unspecified rather than inferring it from the address or a connection duration.</p></details>
+              <details><summary>Is the transfer duration a speed test?</summary><p>No. A small page response is a different workload from a sustained transfer, and it can be affected by caching and timing precision. The reading describes this response, not the capacity of your connection.</p></details>
+              <details><summary>The timings look different each time I load the page.</summary><p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable. <a href="/articles/reading-timings/">How to read a single sample</a></p></details>
+              <details><summary>How do I report abuse?</summary><p>Write to <a href="mailto:abuse@peakora.network">abuse@peakora.network</a> with timestamps in UTC and the hostname or address you observed. These details help us investigate.</p></details>
             </div>
           </div>
         </div>
@@ -187,7 +189,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 46" width="24" height="23" fill="none" role="img" aria-label="Peakora Network"><path fill="currentColor" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/></svg>
             <span class="brand-name">Peakora <b>Network</b></span>
           </a>
-          <p>Distributed edge infrastructure. A considered approach to connections, delivery and network operations.</p>
+          <p>Edge delivery, routing and operations — explained as connected parts of one request path.</p>
         </div>
         <div class="foot-col">
           <p class="rail-label">Site</p>
@@ -195,9 +197,8 @@
             <li><a href="/">Overview</a></li>
             <li><a href="/#infrastructure">Infrastructure</a></li>
             <li><a href="/network/">Network</a></li>
-            <li><a href="/articles/name-resolution/">Name resolution</a></li>
-            <li><a href="/articles/connection-reuse/">Connection reuse</a></li>
-            <li><a href="/articles/reading-timings/">Reading timings</a></li>
+            <li><a href="/articles/">Field notes</a></li>
+            <li><a href="/#contact">Contact</a></li>
           </ul>
         </div>
         <div class="foot-col">

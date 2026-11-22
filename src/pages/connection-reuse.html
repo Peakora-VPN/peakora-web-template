@@ -1,13 +1,15 @@
 <!--
 title: Connection reuse — Peakora Network
 description: What a secure handshake establishes, why a fresh connection costs round trips, and how reusing connections changes what a browser can measure.
+type: article
 out: articles/connection-reuse/index.html
-nav: network
+nav: notes
 -->
-      <section class="band band-hero">
+      <section class="band band-hero article-hero">
         <div class="wrap band-grid">
-          <p class="rail-label">Peakora Network / Articles / Connection reuse</p>
+          <p class="rail-label">Field notes / 02 / Connections</p>
           <div class="band-body">
+            <a class="article-kicker mono" href="/articles/">The request path reading series</a>
             <h1>Setup is a toll, not a destination.</h1>
             <p class="lede">Every fresh connection pays for its own opening: a transport handshake, then a secure handshake on top. None of it moves a request a single byte. The cheapest setup is the one that is not repeated.</p>
           </div>
@@ -148,7 +150,11 @@ nav: network
                 <p>How a browser reports a page load, what the wait for the first byte includes, and why transfer time answers a different question. <a href="/articles/reading-timings/">Read the article</a></p>
               </article>
             </div>
-            <p class="band-more"><a href="/network/">Back to the network guide</a></p>
+            <p class="band-more"><a href="/network/">Back to the network guide</a> · <a href="/articles/">All field notes</a></p>
           </div>
         </div>
+      </section>
+
+      <section class="band article-next" aria-label="Next field note">
+        <div class="wrap band-grid"><p class="rail-label">Next / 03</p><div class="band-body"><p class="mono">Measurements</p><h2><a href="/articles/reading-timings/">One response, two clocks.</a></h2><p>Continue with the difference between waiting for a response and transferring it.</p></div></div>
       </section>
