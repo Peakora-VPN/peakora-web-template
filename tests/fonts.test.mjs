@@ -9,7 +9,7 @@ const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const FILES = ['inter-latin.woff2', 'space-grotesk-latin.woff2', 'jetbrains-mono-latin.woff2'];
 const LICENSES = ['OFL.txt', 'OFL-SpaceGrotesk.txt', 'OFL-JetBrainsMono.txt'];
 
-const css = () => readFileSync(`${SRC}styles.css`, 'utf8');
+const css = () => readFileSync(`${SRC}assets/styles.css`, 'utf8');
 
 function parseRanges(text) {
   const ranges = [];

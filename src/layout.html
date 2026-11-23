@@ -4,17 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{{TITLE}}</title>
-    <meta name="description" content="{{DESCRIPTION}}" />
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}" />
     <meta name="application-name" content="Peakora Network" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#070b16" />
 
-    <meta property="og:type" content="{{OG_TYPE}}" />
+    <meta property="og:type" content="{{ og_type }}" />
     <meta property="og:site_name" content="Peakora Network" />
-    <meta property="og:title" content="{{TITLE}}" />
-    <meta property="og:description" content="{{DESCRIPTION}}" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{ description }}" />
     <meta property="og:locale" content="en_US" />
 
     <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
@@ -30,27 +30,27 @@
     <header class="site-head">
       <div class="wrap head-inner">
         <a class="brand" href="/">
-          <!--LOGO-->
+          {% include "assets/logo.svg" %}
           <span class="brand-name">Peakora <b>Network</b></span>
         </a>
         <nav class="site-nav mono" aria-label="Primary">
-          <a href="/" data-nav="overview">Overview</a>
-          <a href="/network/" data-nav="network">Network</a>
-          <a href="/articles/" data-nav="notes">Field notes</a>
+          <a href="/" data-nav="overview"{% if nav == "overview" %} aria-current="page"{% endif %}>Overview</a>
+          <a href="/network/" data-nav="network"{% if nav == "network" %} aria-current="page"{% endif %}>Network</a>
+          <a href="/articles/" data-nav="notes"{% if nav == "notes" %} aria-current="page"{% endif %}>Field notes</a>
           <a href="/#contact" data-nav="contact">Contact</a>
         </nav>
       </div>
     </header>
 
     <main id="main">
-{{CONTENT}}
+{% block content %}{% endblock %}
     </main>
 
     <footer class="site-foot">
       <div class="wrap foot-grid">
         <div class="foot-brand">
           <a class="brand" href="/">
-            <!--LOGO-->
+            {% include "assets/logo.svg" %}
             <span class="brand-name">Peakora <b>Network</b></span>
           </a>
           <p>Edge delivery, routing and operations — explained as connected parts of one request path.</p>
@@ -68,12 +68,12 @@
         <div class="foot-col">
           <p class="rail-label">Contact</p>
           <ul>
-            <li><a href="mailto:{{CONTACT}}">{{CONTACT}}</a></li>
+            <li><a href="mailto:{{ contact }}">{{ contact }}</a></li>
           </ul>
         </div>
       </div>
       <div class="wrap foot-rule mono">
-        <p>© <span id="year">{{YEAR}}</span> Peakora Network</p>
+        <p>© <span id="year">{{ year }}</span> Peakora Network</p>
         <p id="foot-node">Edge node</p>
       </div>
     </footer>

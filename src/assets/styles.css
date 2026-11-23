@@ -625,3 +625,12 @@ h3 {
   color: var(--text-dim);
 }
 .foot-rule p { margin: 0; }
+
+h1, h2, h3 { text-wrap: balance; }
+a, button, summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(106, 139, 255, 0.18);
+}
+.instrument-total p, .instrument-meta, .connection-metrics dd, .seg-ms {
+  font-variant-numeric: tabular-nums;
+}

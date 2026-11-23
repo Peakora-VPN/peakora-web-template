@@ -1,9 +1,5 @@
-<!--
-title: Peakora Network — Edge infrastructure
-description: Explore the layers of edge delivery, follow a web request and inspect the real timing reported by your browser.
-out: index.html
-nav: overview
--->
+{% extends "layout.html" %}
+{% block content %}
       <section class="band band-hero home-hero">
         <div class="wrap hero-grid">
           <div class="hero-copy">
@@ -183,8 +179,8 @@ nav: overview
             <h2 id="contact-title">Let's talk about the network.</h2>
             <p class="lede">For network enquiries, operational issues and abuse reports, reach the team by email. A little context makes the first response more useful.</p>
             <p class="contact-line">
-              <a class="contact-mail mono" href="mailto:{{CONTACT}}">{{CONTACT}}</a>
-              <button class="copy mono" type="button" data-copy="{{CONTACT}}" aria-label="Copy contact email" aria-live="polite" hidden>Copy</button>
+              <a class="contact-mail mono" href="mailto:{{ contact }}">{{ contact }}</a>
+              <button class="copy mono" type="button" data-copy="{{ contact }}" aria-label="Copy contact email" aria-live="polite" hidden>Copy</button>
             </p>
             <div class="contact-guide">
               <p class="mono">A useful incident report includes</p>
@@ -193,3 +189,4 @@ nav: overview
           </div>
         </div>
       </section>
+{% endblock %}

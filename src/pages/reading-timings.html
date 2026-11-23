@@ -1,10 +1,5 @@
-<!--
-title: Reading timings — Peakora Network
-description: How Navigation Timing reports a page load, what the wait for the first byte includes, and why transfer time answers a different question.
-type: article
-out: articles/reading-timings/index.html
-nav: notes
--->
+{% extends "layout.html" %}
+{% block content %}
       <section class="band band-hero article-hero">
         <div class="wrap band-grid">
           <p class="rail-label">Field notes / 03 / Measurements</p>
@@ -127,7 +122,7 @@ nav: notes
               </details>
               <details>
                 <summary>How do I report what I measured?</summary>
-                <p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with the time in UTC, the hostname and the readings you saw. Screenshots are welcome; timestamps are what make them actionable.</p>
+                <p>Write to <a href="mailto:{{ contact }}">{{ contact }}</a> with the time in UTC, the hostname and the readings you saw. Screenshots are welcome; timestamps are what make them actionable.</p>
               </details>
             </div>
           </div>
@@ -157,3 +152,4 @@ nav: notes
       <section class="band article-next" aria-label="Return to the first field note">
         <div class="wrap band-grid"><p class="rail-label">Read again / 01</p><div class="band-body"><p class="mono">Names</p><h2><a href="/articles/name-resolution/">A name is a question.</a></h2><p>Return to the first stage and see how caching shapes everything that follows.</p></div></div>
       </section>
+{% endblock %}

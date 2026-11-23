@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formatMs, handshakePhases, phaseWidths, protocolLabel } from '../src/lib.js';
+import { formatMs, handshakePhases, phaseWidths, protocolLabel } from '../src/assets/lib.js';
 
 // Слепок PerformanceNavigationTiming: HTTPS, свежее соединение.
 const FRESH = {

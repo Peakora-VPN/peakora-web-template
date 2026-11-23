@@ -1,9 +1,5 @@
-<!--
-title: Network — Peakora Network
-description: A practical reference to DNS, connections, secure transport, HTTP delivery and the browser timings that describe a page load.
-out: network/index.html
-nav: network
--->
+{% extends "layout.html" %}
+{% block content %}
       <section class="band band-hero guide-hero">
         <div class="wrap band-grid">
           <p class="rail-label">Peakora Network / Network guide</p>
@@ -134,8 +130,9 @@ nav: network
               <details><summary>Why is the negotiated protocol sometimes unavailable?</summary><p>A browser does not always expose the protocol identifier for a navigation. When the value is absent, the page leaves it unspecified rather than inferring it from the address or a connection duration.</p></details>
               <details><summary>Is the transfer duration a speed test?</summary><p>No. A small page response is a different workload from a sustained transfer, and it can be affected by caching and timing precision. The reading describes this response, not the capacity of your connection.</p></details>
               <details><summary>The timings look different each time I load the page.</summary><p>These readings describe one page load. Caching, connection reuse and the network path can change between visits. A zero or unreported phase is omitted, and very small segments are widened so their labels remain readable. <a href="/articles/reading-timings/">How to read a single sample</a></p></details>
-              <details><summary>How do I report abuse?</summary><p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with timestamps in UTC and the hostname or address you observed. These details help us investigate.</p></details>
+              <details><summary>How do I report abuse?</summary><p>Write to <a href="mailto:{{ contact }}">{{ contact }}</a> with timestamps in UTC and the hostname or address you observed. These details help us investigate.</p></details>
             </div>
           </div>
         </div>
       </section>
+{% endblock %}
