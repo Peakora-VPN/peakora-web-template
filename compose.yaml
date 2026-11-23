@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
     image: peakora-web:local
     container_name: peakora-web
     init: true

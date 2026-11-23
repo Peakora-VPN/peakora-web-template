@@ -25,6 +25,7 @@ test('Docker образ использует uv lock и запускает не�
 
 test('Compose публикует backend только на loopback и ограничивает контейнер', () => {
   const compose = read('compose.yaml');
+  assert.match(compose, /network: host/);
   assert.match(compose, /127\.0\.0\.1:8000:8000/);
   assert.match(compose, /restart: unless-stopped/);
   assert.match(compose, /read_only: true/);
