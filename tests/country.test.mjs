@@ -5,7 +5,7 @@ import {
   countryFromHostname,
   nodeIdentity,
   regionName,
-} from '../src/lib.js';
+} from '../src/assets/lib.js';
 
 test('разворачивает код страны из первой метки хоста', () => {
   assert.deepEqual(countryFromHostname('pl.peakora.network'), { code: 'PL', name: 'Poland' });
@@ -89,7 +89,7 @@ test('без Intl.DisplayNames сохраняет нейтральный вар�
   const original = Intl.DisplayNames;
   try {
     Intl.DisplayNames = undefined;
-    const lib = await import('../src/lib.js?without-display-names');
+    const lib = await import('../src/assets/lib.js?without-display-names');
     assert.equal(lib.countryFromHostname('pl2.peakora.network'), null);
     assert.equal(lib.regionName('PL'), null);
   } finally {

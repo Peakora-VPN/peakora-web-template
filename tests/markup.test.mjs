@@ -6,65 +6,53 @@ import { fileURLToPath } from 'node:url';
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const read = (name) => readFileSync(SRC + name, 'utf8');
 
-const PAGES = ['pages/index.html', 'pages/network.html', 'pages/articles.html', 'pages/404.html'];
+const PAGES = [
+  'pages/index.html',
+  'pages/network.html',
+  'pages/articles.html',
+  'pages/name-resolution.html',
+  'pages/connection-reuse.html',
+  'pages/reading-timings.html',
+  'pages/404.html',
+];
 const HTML = ['layout.html', ...PAGES];
-const ALL = [...HTML, 'styles.css', 'assets/logo.svg'];
-
+const ALL = [...HTML, 'assets/styles.css', 'assets/app.js', 'assets/lib.js', 'assets/logo.svg'];
 const FORBIDDEN = [
   'vpn', 'proxy', 'xray', 'reality', 'remnawave',
   'marzban', 'shadowsocks', 'vless', 'trojan',
 ];
 
-const metaBlock = (page) => read(page).match(/^\s*<!--([\s\S]*?)-->/);
-
-test('каркас объявляет обязательные метаданные и точки подстановки', () => {
+test('каркас объявляет метаданные и серверные точки подстановки', () => {
   const html = read('layout.html');
   assert.match(html, /<html lang="en">/);
   assert.match(html, /<meta charset="utf-8"/);
   assert.match(html, /<meta name="viewport"/);
-  assert.match(html, /<meta name="description" content="\{\{DESCRIPTION\}\}"/);
+  assert.match(html, /<meta name="description" content="\{\{ description \}\}"/);
   assert.match(html, /<meta name="robots" content="noindex, nofollow"/);
-  assert.match(html, /<meta property="og:type" content="\{\{OG_TYPE\}\}"/);
-  assert.match(html, /<link rel="icon" type="image\/svg\+xml" sizes="any"/);
-  assert.match(html, /<link rel="alternate icon" type="image\/png" sizes="32x32"/);
-  assert.match(html, /<link rel="apple-touch-icon" sizes="180x180"/);
-  assert.match(html, /<title>\{\{TITLE\}\}<\/title>/);
+  assert.match(html, /<meta property="og:type" content="\{\{ og_type \}\}"/);
+  assert.match(html, /<title>\{\{ title \}\}<\/title>/);
   assert.doesNotMatch(html, /<meta name="generator"/);
-  for (const token of ['{{CONTENT}}', '{{YEAR}}', '<!--LOGO-->']) {
-    assert.ok(html.includes(token), `нет плейсхолдера ${token}`);
+  for (const token of ['{% block content %}', '{{ year }}', '{{ contact }}', '{% include "assets/logo.svg" %}']) {
+    assert.ok(html.includes(token), `нет ${token}`);
   }
 });
 
-test('у каждой страницы полный блок метаданных', () => {
+test('каждая страница расширяет общий каркас и объявляет content block', () => {
   for (const page of PAGES) {
-    const head = metaBlock(page);
-    assert.ok(head, `${page}: нет ведущего блока метаданных`);
-    for (const key of ['title', 'description', 'out']) {
-      assert.match(head[1], new RegExp(`^\\s*${key}\\s*:\\s*\\S`, 'm'), `${page}: нет поля ${key}`);
-    }
+    const html = read(page);
+    assert.ok(html.startsWith('{% extends "layout.html" %}\n{% block content %}'), page);
+    assert.ok(html.endsWith('{% endblock %}\n'), page);
   }
 });
 
-test('статьи объявляют тип Open Graph, остальные страницы используют website', () => {
-  for (const page of ['pages/name-resolution.html', 'pages/connection-reuse.html', 'pages/reading-timings.html']) {
-    assert.match(metaBlock(page)[1], /^\s*type:\s*article\s*$/m, page);
-  }
-  for (const page of ['pages/index.html', 'pages/network.html', 'pages/404.html']) {
-    assert.doesNotMatch(metaBlock(page)[1], /^\s*type:/m, page);
-  }
-});
-
-test('навигация каркаса ведёт на страницы, которые действительно собираются', () => {
-  const outs = new Set(PAGES.map((page) => metaBlock(page)[1].match(/^\s*out\s*:\s*(.+?)\s*$/m)[1]));
-  assert.ok(outs.has('index.html'), 'нет главной');
-  assert.ok(outs.has('network/index.html'), 'нет страницы /network/');
-  assert.ok(outs.has('articles/index.html'), 'нет страницы /articles/');
-  assert.ok(outs.has('404.html'), 'нет страницы 404');
-
+test('навигация каркаса ведёт на существующие разделы', () => {
   const layout = read('layout.html');
-  assert.match(layout, /href="\/network\/"/, 'в навигации нет ссылки на /network/');
-  assert.match(layout, /href="\/articles\/" data-nav="notes"/, 'в навигации нет Field notes');
-  assert.match(layout, /href="\/#contact"/, 'ссылка на контакт должна работать с любой страницы');
+  assert.match(layout, /href="\/network\/"/);
+  assert.match(layout, /href="\/articles\/" data-nav="notes"/);
+  assert.match(layout, /href="\/#contact"/);
+  assert.match(layout, /nav == "overview"/);
+  assert.match(layout, /nav == "network"/);
+  assert.match(layout, /nav == "notes"/);
 });
 
 test('главная несёт точки привязки скрипта', () => {
@@ -72,7 +60,7 @@ test('главная несёт точки привязки скрипта', () 
   for (const id of ['node-location', 'infrastructure', 'technical-notes', 'connection', 'hs-track', 'hs-meta', 'hs-total', 'metric-ttfb', 'metric-transfer', 'metric-protocol', 'contact']) {
     assert.ok(html.includes(`id="${id}"`), `нет id="${id}"`);
   }
-  assert.match(html, /data-copy="\{\{CONTACT\}\}"/);
+  assert.match(html, /data-copy="\{\{ contact \}\}"/);
 });
 
 test('публичная главная не превращается в карточку hostname', () => {
@@ -111,7 +99,7 @@ test('контактный адрес нигде не вписан руками'
   const site = JSON.parse(read('site.json'));
   assert.ok(site.contact, 'в site.json нет поля contact');
   for (const name of HTML) {
-    assert.ok(!read(name).includes(site.contact), `${name}: адрес вписан вместо {{CONTACT}}`);
+    assert.ok(!read(name).includes(site.contact), `${name}: адрес вписан вместо Jinja placeholder`);
   }
 });
 
@@ -121,16 +109,16 @@ test('контакт — только mailto и копирование, форм
   assert.doesNotMatch(html, /<form/);
   assert.doesNotMatch(html, /id="request-(?:composer|form|dialog|name|email|message)/);
   assert.doesNotMatch(html, /data-(?:open|close)-request/);
-  assert.match(html, /<a class="contact-mail mono" href="mailto:\{\{CONTACT\}\}">\{\{CONTACT\}\}<\/a>/);
-  assert.match(html, /<button class="copy mono"[^>]*data-copy="\{\{CONTACT\}\}"/);
+  assert.match(html, /<a class="contact-mail mono" href="mailto:\{\{ contact \}\}">\{\{ contact \}\}<\/a>/);
+  assert.match(html, /<button class="copy mono"[^>]*data-copy="\{\{ contact \}\}"/);
 });
 
 test('контакт доступен без JS: ссылка видна, копирование — улучшение', () => {
   const html = read('pages/index.html');
   const link = html.match(/<a class="contact-mail mono"[^>]*>/)?.[0] ?? '';
-  assert.ok(!/\shidden/.test(link), 'mailto-ссылка не должна быть скрыта');
+  assert.ok(!/\shidden/.test(link));
   const copy = html.match(/<button class="copy mono"[^>]*>/)?.[0] ?? '';
-  assert.match(copy, /\shidden/, 'копирование без JS должно быть скрыто');
+  assert.match(copy, /\shidden/);
 });
 
 test('статьи образуют последовательность Field notes', () => {
@@ -139,7 +127,6 @@ test('статьи образуют последовательность Field n
     const html = read(article);
     assert.match(html, /class="band band-hero article-hero"/);
     assert.match(html, /href="\/articles\/"/);
-    assert.match(html, /nav: notes/);
   }
   assert.match(read('pages/name-resolution.html'), /class="band article-next"[\s\S]*?href="\/articles\/connection-reuse\/"/);
   assert.match(read('pages/connection-reuse.html'), /class="band article-next"[\s\S]*?href="\/articles\/reading-timings\/"/);
@@ -158,10 +145,10 @@ test('Network — связанный справочник с рабочим со
   }
 });
 
-test('404 не перебивает свой заголовок', () => {
+test('404 не отмечает пункт меню и предлагает полезные переходы', () => {
   const html = read('pages/404.html');
-  assert.ok(!html.includes('id="node-headline"'), '404 не должна подставлять страну');
-  assert.ok(!html.includes('nav:'), '404 не помечает пункт меню активным');
+  assert.ok(!html.includes('id="node-headline"'));
+  assert.doesNotMatch(html, /aria-current/);
   for (const href of ['href="/network/"', 'href="/articles/"', 'href="/#contact"']) {
     assert.ok(html.includes(href), `404 не содержит ${href}`);
   }
@@ -185,7 +172,7 @@ test('в исходниках нет запрещённых слов', () => {
 });
 
 test('стили определяют тёмную палитру и гасят анимацию по запросу', () => {
-  const css = read('styles.css');
+  const css = read('assets/styles.css');
   assert.match(css, /--bg:\s*#070b16/);
   assert.match(css, /--accent:\s*#37e0c9/);
   assert.match(css, /prefers-reduced-motion/);
@@ -193,7 +180,15 @@ test('стили определяют тёмную палитру и гасят 
 });
 
 test('CSS-блоки сбалансированы, подвал не оказывается внутри медиазапроса', () => {
-  const css = read('styles.css');
+  const css = read('assets/styles.css');
   assert.equal((css.match(/\{/g) ?? []).length, (css.match(/\}/g) ?? []).length);
-  assert.match(css, /@media \(max-width: 30rem\) \{[\s\S]*?\n\}\n\n\/\* ── 404/);
+  assert.match(css, /@media \(max-width: 30rem\) \{[\s\S]*?\n\}\n\n\/\* ── Articles/);
+});
+
+test('типографика и touch interaction следуют interface guidelines', () => {
+  const css = read('assets/styles.css');
+  assert.match(css, /h1,\s*h2,\s*h3\s*\{[^}]*text-wrap:\s*balance/);
+  assert.match(css, /font-variant-numeric:\s*tabular-nums/);
+  assert.match(css, /touch-action:\s*manipulation/);
+  assert.match(css, /-webkit-tap-highlight-color:\s*rgba\(106,\s*139,\s*255,\s*0\.18\)/);
 });

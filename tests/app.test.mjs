@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import * as app from '../src/app.js';
+import * as app from '../src/assets/app.js';
 const { applyConnection, applyNode, wireCopyButtons, wireTabs } = app;
 
 // Минимальный поддельный DOM: jsdom тянуть некуда, зависимостей в проекте нет.

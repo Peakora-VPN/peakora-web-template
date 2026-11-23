@@ -1,10 +1,5 @@
-<!--
-title: Name resolution — Peakora Network
-description: How DNS turns a hostname into an address, where the answer gets cached, and why a lookup can be invisible in a page load.
-type: article
-out: articles/name-resolution/index.html
-nav: notes
--->
+{% extends "layout.html" %}
+{% block content %}
       <section class="band band-hero article-hero">
         <div class="wrap band-grid">
           <p class="rail-label">Field notes / 01 / Names</p>
@@ -108,7 +103,7 @@ nav: notes
               </details>
               <details>
                 <summary>How do I report a resolution problem?</summary>
-                <p>Write to <a href="mailto:{{CONTACT}}">{{CONTACT}}</a> with the hostname, the approximate time in UTC and what you observed. That context is enough for a useful first check.</p>
+                <p>Write to <a href="mailto:{{ contact }}">{{ contact }}</a> with the hostname, the approximate time in UTC and what you observed. That context is enough for a useful first check.</p>
               </details>
             </div>
           </div>
@@ -138,3 +133,4 @@ nav: notes
       <section class="band article-next" aria-label="Next field note">
         <div class="wrap band-grid"><p class="rail-label">Next / 02</p><div class="band-body"><p class="mono">Connections</p><h2><a href="/articles/connection-reuse/">Setup is a toll, not a destination.</a></h2><p>Continue with the work a fresh connection performs and the setup a reused one avoids.</p></div></div>
       </section>
+{% endblock %}
