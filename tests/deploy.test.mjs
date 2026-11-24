@@ -91,11 +91,11 @@ exit 0
   return fixture;
 }
 
-function runInstaller(fixture) {
+function runInstaller(fixture, { withNginx = true } = {}) {
   return execFileSync('bash', ['-c', `
     export PATH="$PEAKORA_TEST_ROOT/bin:/usr/bin:/bin"
     chmod +x "$PEAKORA_TEST_ROOT"/bin/*
-    bash "$PEAKORA_TEST_ROOT/deploy/install.sh" --snippet-dst "$PEAKORA_TEST_ROOT/snippet.conf" --nginx fixture-nginx
+    bash "$PEAKORA_TEST_ROOT/deploy/install.sh" --snippet-dst "$PEAKORA_TEST_ROOT/snippet.conf" ${withNginx ? '--nginx fixture-nginx' : ''}
   `], {
     encoding: 'utf8',
     env: { ...process.env, PEAKORA_TEST_ROOT: toBashPath(fixture) },
@@ -118,6 +118,21 @@ test('существующий Docker собирает и поднимает с�
     assert.match(calls, /docker inspect .*peakora-web/);
     assert.ok(calls.indexOf('fixture-nginx -t') < calls.indexOf('fixture-nginx -s reload'));
     assert.equal(readFileSync(path.join(fixture, 'snippet.conf'), 'utf8'), snippet());
+  } finally {
+    cleanup(fixture);
+  }
+});
+
+test('без nginx скрипт поднимает backend и устанавливает snippet без reload', () => {
+  const fixture = makeFixture();
+  try {
+    const output = runInstaller(fixture, { withNginx: false });
+    assert.match(output, /backend healthy/);
+    assert.equal(readFileSync(path.join(fixture, 'snippet.conf'), 'utf8'), snippet());
+    const calls = readFileSync(path.join(fixture, 'calls.log'), 'utf8');
+    assert.match(calls, /docker compose .* build/);
+    assert.match(calls, /docker compose .* up -d --wait --wait-timeout 120/);
+    assert.doesNotMatch(calls, /fixture-nginx -s reload/);
   } finally {
     cleanup(fixture);
   }

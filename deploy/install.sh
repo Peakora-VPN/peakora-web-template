@@ -11,6 +11,7 @@ SNIPPET_DST="$SNIPPET_DEFAULT"
 INSTALL_SNIPPET=1
 NGINX_CMD=""
 DOCKER_NGINX=""
+NGINX_AVAILABLE=1
 
 usage() {
   cat <<'USAGE'
@@ -104,7 +105,7 @@ find_nginx() {
   if [ "$count" != "0" ]; then
     echo "контейнеров с nginx несколько, выберите нужный через --nginx" >&2
   else
-    echo "nginx не найден; настройте существующий Remnawave nginx или задайте --nginx" >&2
+    echo "nginx не найден; snippet будет установлен без проверки и reload" >&2
   fi
   return 1
 }
@@ -120,7 +121,9 @@ restore_snippet() {
 ensure_docker
 
 if [ "$INSTALL_SNIPPET" -eq 1 ]; then
-  find_nginx
+  if ! find_nginx; then
+    NGINX_AVAILABLE=0
+  fi
   if [ -n "$DOCKER_NGINX" ]; then
     network_mode="$(docker inspect --format '{{.HostConfig.NetworkMode}}' "$DOCKER_NGINX")"
     if [ "$network_mode" != "host" ]; then
@@ -161,21 +164,24 @@ if [ "$INSTALL_SNIPPET" -eq 1 ]; then
   fi
   install -m 644 "$SNIPPET_SRC" "$SNIPPET_DST"
 
-  if [ -n "$DOCKER_NGINX" ] && ! docker exec "$DOCKER_NGINX" test -f "$SNIPPET_DST" 2>/dev/null; then
-    echo "контейнер $DOCKER_NGINX не видит $SNIPPET_DST; пробросьте файл до запуска установщика" >&2
-    restore_snippet
-    exit 1
-  fi
+  if [ "$NGINX_AVAILABLE" -eq 1 ]; then
+    if [ -n "$DOCKER_NGINX" ] && ! docker exec "$DOCKER_NGINX" test -f "$SNIPPET_DST" 2>/dev/null; then
+      echo "контейнер $DOCKER_NGINX не видит $SNIPPET_DST; пробросьте файл до запуска установщика" >&2
+      restore_snippet
+      exit 1
+    fi
 
-  if ! $NGINX_CMD -t; then
-    echo "nginx -t не прошёл, прежний фрагмент восстановлен" >&2
-    restore_snippet
-    exit 1
-  fi
-  if ! $NGINX_CMD -s reload; then
-    echo "nginx не перезагрузился, прежний фрагмент восстановлен" >&2
-    restore_snippet
-    exit 1
+    if ! $NGINX_CMD -t; then
+      echo "nginx -t не прошёл, прежний фрагмент восстановлен" >&2
+      restore_snippet
+      exit 1
+    fi
+    if ! $NGINX_CMD -s reload; then
+      echo "nginx не перезагрузился, прежний фрагмент восстановлен" >&2
+      restore_snippet
+      exit 1
+    fi
+    echo "-> nginx проверен и перезагружен"
   fi
   if [ -n "$BACKUP" ]; then
     rm -f "$BACKUP"

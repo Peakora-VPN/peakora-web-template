@@ -94,8 +94,10 @@ responsive layout, focus-visible и `prefers-reduced-motion`.
 `deploy/install.sh` запускается от root на Linux и требует установленные
 Docker и Compose v2 с запущенным daemon. Docker и daemon скрипт не устанавливает
 и не настраивает. Compose создаёт или поднимает контейнер сайта, затем скрипт
-ждёт healthy. Далее копирует snippet с backup, делает `nginx -t` и reload; при
-ошибке snippet откатывается. `/var/www/html`, старые файлы и чужие права не трогает.
+ждёт healthy. Копирует snippet с backup, кроме режима `--no-snippet`. Если nginx
+найден, делает `nginx -t` и reload; при ошибке snippet откатывается. Если nginx
+не найден, пропускаются только проверка и reload, snippet остаётся установленным.
+`/var/www/html`, старые файлы и чужие права не трогает.
 
 Compose публикует только `127.0.0.1:8000:8000`. Контейнер nginx должен иметь
 `network_mode: host`: его loopback тогда совпадает с host-loopback, как и для
